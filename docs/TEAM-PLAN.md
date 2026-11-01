@@ -148,7 +148,7 @@ orchestrator
 Rule: **each person owns whole directories. Nobody edits another person's directory.** Cross-boundary
 needs go through the frozen contracts above.
 
-Team: **P1 = Kyle**. P2–P5 = teammates (names TBD at the 10/31 sync).
+Team: **P1 = Kyle, P4 = Miguel, P5 = Jordan**. P2, P3 TBD at the 10/31 sync.
 
 ### P1 — Kyle (team lead): the two test-generation subagents
 **Owns:** `.agents/ep-tests/SKILL.md`, `.agents/bva-tests/SKILL.md`, `docs/test-design.md`,
@@ -191,7 +191,7 @@ the `runs/` evidence tree, `docs/changelog-format.md`.
 artifacts sit in `runs/`; the deck has all seven required sections and its coverage numbers come
 from real files.
 
-### P4 — The overarching test skill
+### P4 — Miguel: the overarching test skill
 **Owns:** `.agents/testgen/SKILL.md`, `projects/`.
 - `testgen` is the heaviest single file: it spawns P1's two subagents concurrently, joins and
   dedupes, holds the G1 human gate, writes JUnit, runs and repairs the suite, and gates on 100%
@@ -203,7 +203,7 @@ from real files.
 **Done when:** `testgen(mode=generate)` and `testgen(mode=adapt)` both exit at 100% coverage in a
 dry run; the profile is frozen and P1's skills consume it unchanged.
 
-### P5 — State-pattern refactor + prompt mutation study
+### P5 — Jordan: State-pattern refactor + prompt mutation study
 **Owns:** `.agents/refactor-state/SKILL.md`, `docs/prompt-mutations/` + mutation table,
 `java/refactored/`.
 - Run the prompt-mutation exercise against a web LLM until quality is satisfactory; keep every version.
