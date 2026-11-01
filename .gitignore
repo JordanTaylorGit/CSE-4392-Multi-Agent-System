@@ -1,0 +1,8 @@
+runs/
+**/target/
+__pycache__/
+*.pyc
+*.class
+.env
+.DS_Store
+~$*.pptx

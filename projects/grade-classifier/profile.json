@@ -1,0 +1,23 @@
+{
+  "project": "grade-classifier",
+  "subject": "GradeClassifier",
+  "language": "java",
+  "source": "projects/grade-classifier/GradeClassifier.java",
+  "test_root": "examples/test/java/examples",
+  "units": [
+    { "name": "classify", "kind": "pure", "params": ["score"] }
+  ],
+  "state_variables": [],
+  "observable": ["return", "exception"],
+  "boundaries": [
+    { "name": "range_min", "value": 0, "applies_to": "classify", "condition": "score < 0", "on_true": "throws IllegalArgumentException", "on_false": "classifies" },
+    { "name": "range_max", "value": 100, "applies_to": "classify", "condition": "score > 100", "on_true": "throws IllegalArgumentException", "on_false": "classifies" },
+    { "name": "D_min", "value": 60, "applies_to": "classify", "condition": "score >= 60", "on_true": "\"D\" or better", "on_false": "\"F\"" },
+    { "name": "C_min", "value": 70, "applies_to": "classify", "condition": "score >= 70", "on_true": "\"C\" or better", "on_false": "\"D\"" },
+    { "name": "B_min", "value": 80, "applies_to": "classify", "condition": "score >= 80", "on_true": "\"B\" or better", "on_false": "\"C\"" },
+    { "name": "A_min", "value": 90, "applies_to": "classify", "condition": "score >= 90", "on_true": "\"A\"", "on_false": "\"B\"" }
+  ],
+  "dedupe_key": ["inputs"],
+  "coverage": { "command": null, "report": null, "metric": "branch", "threshold": 100.0 },
+  "constraints": []
+}

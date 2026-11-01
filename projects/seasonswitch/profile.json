@@ -1,0 +1,40 @@
+{
+  "project": "seasonswitch",
+  "subject": "SeasonSwitch",
+  "language": "java",
+  "source": "java/src/original/java/cse4392/SeasonSwitch.java",
+  "test_root": "java/src/test/java/cse4392",
+  "units": [
+    { "name": "cool", "kind": "command", "params": [] },
+    { "name": "heat", "kind": "command", "params": [] },
+    { "name": "off", "kind": "command", "params": [] },
+    { "name": "timerOff", "kind": "command", "params": [] }
+  ],
+  "state_variables": ["state", "ac.isOn", "heater.isOn"],
+  "observable": ["state", "ac.isOn", "heater.isOn", "stdout"],
+  "boundaries": [
+    {
+      "name": "coolTemp", "value": 68, "applies_to": "timerOff",
+      "condition": "room.temp > coolTemp",
+      "on_true": "ac.on()", "on_false": "ac.off()"
+    },
+    {
+      "name": "heatTemp", "value": 77, "applies_to": "timerOff",
+      "condition": "room.temp < heatTemp",
+      "on_true": "heater.on()", "on_false": "heater.off()"
+    }
+  ],
+  "dedupe_key": ["unit", "setup", "inputs"],
+  "coverage": {
+    "command": "./scripts/coverage.sh {target}",
+    "report": "jacoco.xml",
+    "metric": "branch",
+    "threshold": 100.0
+  },
+  "constraints": [
+    "state is static: reset it to OFF before every case, or test order decides results",
+    "never start either javax.swing.Timer; call timerOff() directly",
+    "capture System.out; most outcomes are only observable as printed text",
+    "drive state through the public API, never by assigning `state` -- the refactored version has no int field"
+  ]
+}

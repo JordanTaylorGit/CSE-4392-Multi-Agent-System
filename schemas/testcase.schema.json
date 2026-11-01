@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "testcase.schema.json",
+  "title": "Project-agnostic test case",
+  "description": "One executable case for any unit under test. setup/inputs/expected are free-form objects whose vocabulary is defined by the project profile at projects/<project>/profile.json -- that is what keeps this schema usable for a stateless function and a stateful object alike.",
+  "type": "object",
+  "required": ["id", "method", "target", "unit", "setup", "inputs", "expected", "partition", "rationale"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^(EP|BVA|GAP)-[0-9]{2}$" },
+    "method": { "enum": ["EP", "BVA", "GAP"] },
+    "target": { "enum": ["original", "refactored"] },
+    "unit": {
+      "type": "string",
+      "description": "The unit under test, matching a name in the profile's `units`."
+    },
+    "setup": {
+      "type": "object",
+      "description": "Preconditions established before the call. Empty for a stateless unit.",
+      "additionalProperties": true
+    },
+    "inputs": {
+      "type": "object",
+      "description": "Arguments passed to the unit. Empty when it takes none.",
+      "additionalProperties": true
+    },
+    "expected": {
+      "type": "object",
+      "description": "Every observable outcome the profile declares: return value, state variables, output, or exception.",
+      "additionalProperties": true
+    },
+    "partition": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Name of the equivalence class or boundary side this case represents."
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Why this case represents that class and no other."
+    }
+  }
+}
