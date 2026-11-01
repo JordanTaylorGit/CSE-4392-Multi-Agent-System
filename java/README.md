@@ -30,4 +30,4 @@ That shape is why the assignment wants a State-pattern refactor: three `switch (
 the Subject are exactly the smell being removed. It is also why the tests are delicate — see the
 testability constraints in `.agents/run-tests/SKILL.md`.
 
-`main()` blocks for five seconds and calls `System.exit`; it is not unit-testable and is excluded.
+`main()` blocks forever (a `CountDownLatch` nobody counts down) and calls `System.exit`; it is not unit-testable and `scripts/coverage.sh` leaves it out. See `docs/original-behavior.md`.
