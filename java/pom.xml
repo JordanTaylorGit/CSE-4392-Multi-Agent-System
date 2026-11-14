@@ -12,7 +12,7 @@
 
   <!--
     The original and refactored classes are both named `SeasonSwitch` in the same package, so they
-    cannot share a classpath. Profiles swap the main source root while src/test/java stays put --
+    cannot share a classpath. Profiles swap the main source root while src/test/java stays put
     which is what makes "reuse the existing tests" literal rather than aspirational.
 
       mvn -P original   test
@@ -24,6 +24,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <junit.version>5.10.2</junit.version>
     <jacoco.version>0.8.12</jacoco.version>
+    <active.source.dir>src/original/java</active.source.dir>
   </properties>
 
   <dependencies>
@@ -36,6 +37,7 @@
   </dependencies>
 
   <build>
+    <sourceDirectory>${active.source.dir}</sourceDirectory>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -67,15 +69,15 @@
   <profiles>
     <profile>
       <id>original</id>
-      <build>
-        <sourceDirectory>src/original/java</sourceDirectory>
-      </build>
+      <properties>
+        <active.source.dir>src/original/java</active.source.dir>
+      </properties>
     </profile>
     <profile>
       <id>refactored</id>
-      <build>
-        <sourceDirectory>src/refactored/java</sourceDirectory>
-      </build>
+      <properties>
+        <active.source.dir>src/refactored/java</active.source.dir>
+      </properties>
     </profile>
   </profiles>
 </project>
