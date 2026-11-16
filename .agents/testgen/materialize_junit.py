@@ -59,7 +59,7 @@ def materialize(args: argparse.Namespace) -> Path:
         raise MaterializeError("Only Java projects can generate JUnit test classes")
     output = args.out.resolve()
     test_root = (ROOT / profile.get("test_root", "")).resolve()
-    if test_root == ROOT or not test_root.is_relative_to(ROOT):
+    if test_root == ROOT.resolve() or not test_root.is_relative_to(ROOT.resolve()):
         raise MaterializeError("Invalid test_root in project profile")
     if output.parent != test_root or output.suffix != ".java" or not JAVA_CLASS.fullmatch(output.stem):
         raise MaterializeError("Output must be a Java class immediately inside profile.test_root")
