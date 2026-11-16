@@ -82,6 +82,36 @@ Stop. Present `testcases_final.json` + `dedupe-report.md`. Record the decision i
 - accept → Phase C.
 - request changes → Phase A again, feedback appended to both subagent briefs.
 
+The manual G1 helper validates and presents the current merged case set; it does **not**
+automatically approve it or implement LangGraph pause/resume. From the repo root:
+
+```bash
+python3 .agents/testgen/review_cases.py prepare \
+  --cases runs/<run>/testcases_final.json --report runs/<run>/dedupe-report.md
+```
+
+After a human reviews both files, record **their actual decision** using the SHA256 printed
+by `prepare` (use `--decision request_changes --change "..."` for a rejection):
+
+```bash
+python3 .agents/testgen/review_cases.py record \
+  --cases runs/<run>/testcases_final.json --report runs/<run>/dedupe-report.md \
+  --log runs/<run>/hitl_decisions.json --reviewer REVIEWER \
+  --decision accept --expected-sha256 REVIEWED_SHA256
+```
+
+The log appends schema-validated individual decisions (as a JSON history array). Before Phase C,
+**require a successful check**; it rejects missing, rejected, or stale approvals:
+
+```bash
+python3 .agents/testgen/review_cases.py check \
+  --cases runs/<run>/testcases_final.json --report runs/<run>/dedupe-report.md \
+  --log runs/<run>/hitl_decisions.json
+```
+
+Loc's LangGraph harness must perform the actual human interrupt/resume and should use the
+same G1 decision contract; this CLI is only the manual evidence/verification helper.
+
 ### Phase C — materialize (step 5, part)
 
 Write JUnit to `profile.test_root`. One `@Test` per case, `@DisplayName` = id + partition. Assert
