@@ -45,7 +45,9 @@ class SkillClient:
         text = response.text
         self.transcripts.mkdir(parents=True, exist_ok=True)
         (self.transcripts / f"{stage}-{uuid4().hex}.json").write_text(
-            json.dumps({"request": payload, "skill": skill, "response": text}, indent=2) + "\n",
+            json.dumps({"request": payload, "skill": skill, "response": text,
+                        "model": response.response_metadata.get("model", getattr(self.model, "model", type(self.model).__name__))},
+                       indent=2) + "\n",
             encoding="utf-8",
         )
         result = json.loads(text)

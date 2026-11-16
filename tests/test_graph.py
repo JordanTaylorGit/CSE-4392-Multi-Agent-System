@@ -167,3 +167,33 @@ def test_coverage_gaps_add_tests_only_after_human_review(tmp_path, target):
     if "__interrupt__" in result:
         result = graph.invoke(decide(result), CONFIG)
     assert result["status"] == "complete", result.get("error")
+
+
+@pytest.mark.parametrize("gap", [False, True])
+def test_g3_rejects_case_artifacts_changed_while_review_is_pending(tmp_path, gap):
+    outcomes = [(True, True), (True, False)] if gap else []
+    run, _, _, graph = setup(tmp_path, outcomes=outcomes)
+    result = graph.invoke({}, CONFIG)
+    result = graph.invoke(decide(result), CONFIG)
+    if gap:
+        result = graph.invoke(decide(result), CONFIG)
+    name = "testcases_proposed.json" if gap else "testcases_final.json"
+    changed = run.json(name)
+    changed["cases"][0]["expected"] = {"ac.isOn": True}
+    run.save(name, changed)
+    result = graph.invoke(decide(result), CONFIG)
+    assert result["status"] == "blocked"
+    assert "changed" in result["error"]
+
+
+def test_refactor_rejection_after_gap_and_repair_preserves_approved_gap_cases(tmp_path):
+    run, _, _, graph = setup(tmp_path, outcomes=[(True, True), (True, False), (False, False)])
+    result = graph.invoke({}, CONFIG)
+    for _ in range(3):  # Initial G1, initial G3, then G3 for supplemental tests.
+        result = graph.invoke(decide(result), CONFIG)
+    assert result["__interrupt__"][0].value["gate"] == "review_refactored"
+    assert len(run.json("testcases_refactored.json")["cases"]) == 3
+    result = graph.invoke(decide(result, "request_changes"), CONFIG)
+    result = graph.invoke(decide(result), CONFIG)
+    assert len(run.json("testcases_refactored.json")["cases"]) == 3
+    assert result["status"] == "complete", result.get("error")

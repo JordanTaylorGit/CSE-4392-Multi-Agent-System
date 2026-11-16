@@ -39,3 +39,13 @@ def test_supplemental_tests_cannot_replace_existing_tests(tmp_path):
     run.write_sources(files, "test", append_only=True)
     with pytest.raises(ValueError, match="existing"):
         run.write_sources([{**files[0], "content": "weakened"}], "test", append_only=True)
+
+
+def test_complete_refactor_replaces_obsolete_state_classes(tmp_path):
+    run = RunWorkspace.create(ROOT, tmp_path / "run", "seasonswitch")
+    prefix = "java/src/refactored/java/"
+    run.write_sources([{"path": prefix + name, "content": name}
+                       for name in ("A.java", "B.java")], "refactored")
+    run.write_sources([{"path": prefix + name, "content": name}
+                       for name in ("A.java", "C.java")], "refactored", replace_tree=True)
+    assert set(run.source_files("refactored")) == {prefix + "A.java", prefix + "C.java"}

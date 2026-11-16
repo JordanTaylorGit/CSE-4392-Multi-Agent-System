@@ -79,6 +79,11 @@ class Stages:
         else:
             content = {"sources": self.run.source_files("refactored"),
                        "notes": (self.run.directory / "refactor-notes.md").read_text()}
+            # Bind both the proposed case revision and its approved base to G3.
+            for name in ("testcases_final.json", "testcases_refactored.json", "testcases_proposed.json"):
+                path = self.run.directory / name
+                if path.exists():
+                    content[name] = path.read_text()
         content["tests"] = self.run.source_files("test")
         content["pending_gap"] = state.get("pending_gap")
         return hashlib.sha256(json.dumps(content, sort_keys=True).encode()).hexdigest()
@@ -95,16 +100,19 @@ class Stages:
         if self.fingerprint(gate, state) != state["review_fingerprint"]:
             raise ValueError("Reviewed artifacts changed; start a new review instead of approving stale data")
         artifact_hash = digest(self.cases_path(state)) if gate == "review_testcases" else state["review_fingerprint"]
+        cases = self.cases_path(state, "original" if gate == "review_testcases" else "refactored")
+        if not cases.exists():
+            cases = self.run.directory / "testcases_final.json"
         return {"gate": gate, "artifact_sha256": artifact_hash,
                 "run_dir": str(self.run.directory),
-                "cases": str(self.cases_path(state, "original" if gate == "review_testcases" else "refactored")),
+                "cases": str(cases),
                 "sources": str(self.run.workspace / "java/src"),
                 "notes": str(self.run.directory / ("dedupe-report.md" if gate == "review_testcases" else "refactor-notes.md")),
                 "proposed_tests": state.get("pending_gap", {}).get("files", []),
                 "instruction": "Review the artifacts, source diff, and any proposed tests. "
                                "Supply reviewer, decision, requested_changes, and this artifact_sha256."}
 
-    def record_decision(self, payload: dict, decision: dict, state: dict):
+    def validate_decision(self, payload: dict, decision: dict):
         self.decision_validator.validate(decision)
         if decision["gate"] != payload["gate"] or decision.get("artifact_sha256") != payload["artifact_sha256"]:
             raise ValueError("Decision does not identify the current gate and reviewed artifact")
@@ -115,6 +123,8 @@ class Stages:
             decision["decision"] == "request_changes" and (not changes or any(not c.strip() for c in changes))
         ):
             raise ValueError("Acceptance has no requested changes; rejection requires nonempty changes")
+    def record_decision(self, payload: dict, decision: dict, state: dict):
+        self.validate_decision(payload, decision)
         self.review_payload(payload["gate"], state)  # Recheck after the interrupt resumes.
         history = self.run.json("hitl_decisions.json") if (
             self.run.directory / "hitl_decisions.json").exists() else []
@@ -151,7 +161,8 @@ class Stages:
         result = self.model.request(stage, self.prompt("refactor-state" if stage == "refactor" else "testgen"),
                                     task, context)
         validate(result, SOURCE_RESPONSE)
-        self.run.write_sources(result["files"], target, reason=f"{stage} attempt {attempt}")
+        self.run.write_sources(result["files"], target, replace_tree=stage == "refactor",
+                               reason=f"{stage} attempt {attempt}")
         if target == "refactored":
             with (self.run.directory / "refactor-notes.md").open(
                 "w" if stage == "refactor" else "a", encoding="utf-8"

@@ -91,9 +91,19 @@ class RunWorkspace:
         return pending
 
     def write_sources(self, files: list[dict], target: str, *, append_only=False,
-                      reason="source update") -> None:
+                      replace_tree=False, reason="source update") -> None:
         pending = self.validate_sources(files, target, append_only=append_only)
         changes = []
+        if replace_tree:
+            if target != "refactored":
+                raise ValueError("Only a complete refactor can replace a source tree")
+            retained = {path for path, _ in pending}
+            for old in sorted((self.workspace / "java/src/refactored/java").rglob("*.java")):
+                if old.resolve() not in retained:
+                    changes.extend(difflib.unified_diff(
+                        old.read_text().splitlines(True), [],
+                        fromfile=str(old.relative_to(self.workspace)), tofile="/dev/null"))
+                    old.unlink()
         for path, content in pending:
             before = path.read_text(encoding="utf-8") if path.exists() else ""
             changes.extend(difflib.unified_diff(before.splitlines(True), content.splitlines(True),

@@ -34,6 +34,7 @@ class State(TypedDict, total=False):
     minimum_tests: int
     approved_refactor_digest: str
     compiled: bool
+    adapted: bool
 
 
 def increment(state: State, key: str, *, bounded=True) -> tuple[dict, int]:
@@ -136,7 +137,8 @@ def build_graph(*, model, run: RunWorkspace, checkpointer, build_runner=None):
         stages.change_source("refactor", "refactored", state, attempt)
         result = stages.builder.compile(run, attempt)
         updates = {"counts": counts, "compiled": result["passed"], "feedback": result["log"],
-                   "target": "refactored", "after_review": "adapt"}
+                   "target": "refactored",
+                   "after_review": "build_refactored" if state.get("adapted") else "adapt"}
         if result["passed"]:
             updates.update(stages.prepare_review("review_refactored", state))
         return updates
@@ -148,7 +150,7 @@ def build_graph(*, model, run: RunWorkspace, checkpointer, build_runner=None):
             case["target"] = "refactored"
         run.save("testcases_refactored.json", adapted)
         # The Maven profile changes the source root; assertions and expected values stay intact.
-        return {"cases_digest": digest(run.directory / "testcases_refactored.json")}
+        return {"cases_digest": digest(run.directory / "testcases_refactored.json"), "adapted": True}
 
     def gap(target):
         def node(state):
