@@ -47,7 +47,8 @@ uv run python -m harness resume --run runs/<run-id> --decision decision.json
 ## Boundaries and limitations
 
 Do not edit teammates' prompts or project vocabulary to conceal integration gaps.
-Do not push, submit the assignment, or fabricate human approvals or model-run evidence.
+Loc authorized pushing the P2 branch after verification.
+Do not submit the assignment or fabricate human approvals or model-run evidence.
 Never execute a model-provided command or let a model write outside approved Java directories.
 Generated Java is executable code; a copied workspace is isolation from repository edits, not an operating-system sandbox.
 The build runner strips API credentials from the child environment and has a timeout.

@@ -29,7 +29,9 @@ The complete automated E2E result uses clearly labeled test fixtures and is not 
 
 ## Handoff
 
-Work is on local branch `loc/p2-langgraph`; nothing was pushed or sent to teammates.
+Work is on branch `loc/p2-langgraph`.
+Loc authorized publishing this branch to GitHub after final verification on November 16, 2026.
+Live review decisions and generated run artifacts remain local under ignored `runs/`.
 The branch integrates P4's testgen helpers and P3's build branch.
 The sole helper correction resolves the repository root before containment checks, fixing macOS `/var` versus `/private/var` symlink behavior exposed by P4's tests.
 Read the README to resume the live G1 review or start a separate run.
