@@ -35,5 +35,5 @@ def test_injected_models_need_no_api_key_and_receive_skill_and_context(tmp_path,
 @pytest.mark.parametrize("answer", ["", "not JSON", "[]"])
 def test_invalid_model_responses_fail_instead_of_becoming_artifacts(tmp_path, answer):
     client = SkillClient(RunnableLambda(lambda _: AIMessage(content=answer)), tmp_path)
-    with pytest.raises(ValueError):
+    with pytest.raises((ValueError, TypeError)):
         client.request("example", "Skill", "Task", {})

@@ -2,11 +2,11 @@
 from __future__ import annotations
 
 import os
-from pathlib import Path
 import shutil
 import signal
 import subprocess
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 from harness.workspace import RunWorkspace, child_environment
 

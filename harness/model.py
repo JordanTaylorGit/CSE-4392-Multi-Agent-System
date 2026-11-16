@@ -9,7 +9,6 @@ from uuid import uuid4
 from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
 from langchain_core.runnables import Runnable
 
-
 DEFAULT_MODEL = "qwen2.5-coder:14b"
 
 
@@ -51,5 +50,5 @@ class SkillClient:
         )
         result = json.loads(text)
         if not isinstance(result, dict):
-            raise ValueError(f"{stage}: model response must be a JSON object")
+            raise TypeError(f"{stage}: model response must be a JSON object")
         return result

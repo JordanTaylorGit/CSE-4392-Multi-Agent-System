@@ -4,7 +4,6 @@ import pytest
 
 from harness.workspace import RunWorkspace
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 

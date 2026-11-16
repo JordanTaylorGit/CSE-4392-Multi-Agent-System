@@ -5,11 +5,11 @@ import difflib
 import hashlib
 import json
 import os
-from pathlib import Path
 import re
 import shutil
 import subprocess
 import sys
+from pathlib import Path
 from uuid import uuid4
 
 
@@ -113,7 +113,7 @@ class RunWorkspace:
             raise ValueError("Unknown testgen helper")
         command = [sys.executable, str(self.workspace / ".agents/testgen" / f"{name}.py"),
                    *map(str, args)]
-        result = subprocess.run(command, capture_output=True, text=True, timeout=60,
+        result = subprocess.run(command, check=False, capture_output=True, text=True, timeout=60,
                                 env=child_environment(), cwd=self.workspace)
         if result.returncode:
             raise ValueError(f"{name}: {result.stdout}\n{result.stderr}")
