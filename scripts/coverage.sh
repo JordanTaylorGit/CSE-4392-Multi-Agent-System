@@ -25,11 +25,17 @@ report = Path("target/site/jacoco/jacoco.xml")
 if not report.exists():
     sys.exit(f"no jacoco report at {report}")
 
+# Count per method: jacoco.xml repeats each total at method, class, package and report
+# level, so summing every <counter> would count each branch four times. main() blocks and
+# calls System.exit, so it is not unit-testable and stays out of the number (java/README.md).
 covered = missed = 0
-for counter in ET.parse(report).getroot().iter("counter"):
-    if counter.get("type") == "BRANCH":
-        covered += int(counter.get("covered", 0))
-        missed += int(counter.get("missed", 0))
+for method in ET.parse(report).getroot().iter("method"):
+    if method.get("name") == "main":
+        continue
+    for counter in method.findall("counter"):
+        if counter.get("type") == "BRANCH":
+            covered += int(counter.get("covered", 0))
+            missed += int(counter.get("missed", 0))
 
 total = covered + missed
 pct = 100.0 if total == 0 else round(100.0 * covered / total, 2)
