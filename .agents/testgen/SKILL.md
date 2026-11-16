@@ -59,6 +59,21 @@ removing duplicates under the profile's `dedupe_key`. Two cases with the same ke
 `expected` = a conflict, not a duplicate: record it and stop. `dedupe-report.md` lists every removed
 case and its survivor, with counts in/out/removed.
 
+Run the Phase B merger after both subagent outputs are ready (from the repo root):
+
+```bash
+python3 .agents/testgen/merge_cases.py \
+  --profile projects/<project>/profile.json \
+  --ep runs/<run>/testcases_ep.json \
+  --bva runs/<run>/testcases_bva.json \
+  --out runs/<run>/testcases_final.json \
+  --report runs/<run>/dedupe-report.md
+```
+
+Install its JSON Schema dependency from `.agents/testgen/requirements.txt`. A nonzero
+exit code blocks G1; inspect `dedupe-report.md` and correct the subagent outputs.
+The merger never approves a gate or generates JUnit tests.
+
 ### Gate G1 — human review (step 4)
 
 Stop. Present `testcases_final.json` + `dedupe-report.md`. Record the decision in
