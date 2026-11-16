@@ -117,6 +117,26 @@ same G1 decision contract; this CLI is only the manual evidence/verification hel
 Write JUnit to `profile.test_root`. One `@Test` per case, `@DisplayName` = id + partition. Assert
 from the case's `expected`, never re-derived from the implementation.
 
+The project-agnostic Phase C helper checks that G1 explicitly approved the **current** case
+set, then loads a Java rendering adapter from `projects/<project>/junit_adapter.py`. The
+adapter defines the project's `setup`/`inputs`/`expected` vocabulary; the main skill must
+not hard-code its domain. Example invocation from the repo root (replace the placeholders):
+
+```bash
+python3 .agents/testgen/materialize_junit.py \
+  --profile projects/<project>/profile.json \
+  --cases runs/<run>/testcases_final.json \
+  --report runs/<run>/dedupe-report.md \
+  --log runs/<run>/hitl_decisions.json \
+  --out <profile.test_root>/<GeneratedTestClass>.java
+```
+
+A missing/rejected/stale G1 decision or an unknown case field is an error, not permission to
+invent expected outcomes. Existing hand-written Java tests are not overwritten. The current
+adapter supports **original SeasonSwitch cases only**; refactored-source adaptation and
+support for other projects must be added and verified separately. This step writes the Java
+source but does not invoke Maven or claim coverage (those belong to Phases D/E).
+
 ### Phase D — run and repair (steps 5–6)
 
 Run the suite via `profile.coverage.command` with `{target}` substituted. While tests fail: change
