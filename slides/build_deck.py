@@ -248,12 +248,12 @@ def build(out: Path) -> list[str]:
          "CSE 4392/5320  ·  Team Assignment 3", size=20, color=MUTED)
     team = [
         ("Kyle (P1, team lead)", "EP and BVA test-generation subagents"),
-        ("TODO: name (P2)", "orchestrator skill and activity diagram"),
+        ("Loc (P2)", "orchestrator skill and activity diagram"),
         ("Talha Nadeem (P3)", "Java build, coverage tooling, pipeline runs, this deck"),
         ("Miguel (P4)", "testgen skill and project profiles"),
         ("Jordan (P5)", "State-pattern refactor and prompt-mutation study"),
     ]
-    todos.append("slide 1: team: P2's name, and full names for Kyle, Miguel and Jordan")
+    todos.append("slide 1: team: full names for Kyle, Loc, Miguel and Jordan")
     y = Inches(4.3)
     for who, role in team:
         text(s, MARGIN, y, Inches(3.6), Inches(0.4), who, size=16, bold=True,
@@ -320,7 +320,7 @@ def build(out: Path) -> list[str]:
         label_box(s, MARGIN, Inches(3.7), Inches(2.8), Inches(0.75), "ep-tests  ∥  bva-tests",
                   "concurrent subagents, then join", fill=WHITE, size=12)
         arrow(s, MARGIN + Inches(0.65), Inches(3.7), MARGIN + Inches(0.65), y0 + Inches(1.0))
-        hole(s, MARGIN, Inches(4.9), body_w, Inches(1.6), "P2",
+        hole(s, MARGIN, Inches(4.9), body_w, Inches(1.6), "P2 (Loc)",
              "Replace this sketch with docs/activity.png (the UML activity diagram); the deck picks it up "
              "automatically on the next build.")
 
@@ -366,7 +366,7 @@ def build(out: Path) -> list[str]:
     # (d) code per component ----------------------------------------------
     for title, owner, what in [
         ("EP and BVA subagents", "P1 (Kyle)", "Frontmatter, how the profile drives the cases, and one case each from testcases_ep.json and testcases_bva.json."),
-        ("Orchestrator", "P2", "The 12-step state machine, the four gates, the refusal rules, and how STATE.md lets a run resume."),
+        ("Orchestrator", "P2 (Loc)", "The 12-step state machine, the four gates, the refusal rules, and how STATE.md lets a run resume."),
         ("Refactor skill and prompt mutations", "P5 (Jordan)", "SeasonState and the concrete states, plus the table of prompt versions: what changed and why."),
     ]:
         s = new("(d) Code")
