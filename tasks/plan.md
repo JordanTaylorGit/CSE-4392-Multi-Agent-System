@@ -4,7 +4,7 @@
 
 Implement the existing assignment pipeline in LangGraph while retaining the team's skill files as the stage prompts.
 Loc authorized the full P2 orchestrator and an injected, replaceable model on November 16, 2026.
-The default is the local Ollama model qwen2.5-coder:14b, as requested by Loc.
+Loc requested Ollama; the selected default is the local qwen3-coder:30b model.
 The graph receives its model and build runner as dependencies; tests supply deterministic substitutes.
 
 ## Design

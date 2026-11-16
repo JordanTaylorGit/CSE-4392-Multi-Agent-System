@@ -10,7 +10,7 @@ from harness.model import SkillClient, create_model
 def test_default_and_replacement_model_are_selected_only_at_construction(monkeypatch):
     monkeypatch.delenv("MODEL_NAME", raising=False)
     default = create_model()
-    assert default.model == "qwen2.5-coder:14b"
+    assert default.model == "qwen3-coder:30b"
     assert default.base_url == "http://127.0.0.1:11434"
     monkeypatch.setenv("MODEL_NAME", "another-model")
     assert create_model().model == "another-model"

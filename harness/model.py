@@ -9,7 +9,7 @@ from uuid import uuid4
 from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
 from langchain_core.runnables import Runnable
 
-DEFAULT_MODEL = "qwen2.5-coder:14b"
+DEFAULT_MODEL = "qwen3-coder:30b"
 
 
 def create_model():

@@ -10,7 +10,11 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["pytest>=8,<10", "ruff>=0.14,<1"]
+dev = [
+    "pillow>=12,<13",
+    "pytest>=8,<10",
+    "ruff>=0.14,<1",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests", ".agents/testgen/tests"]

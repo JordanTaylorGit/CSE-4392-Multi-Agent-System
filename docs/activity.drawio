@@ -1,0 +1,394 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net">
+  <diagram name="P2 activity" id="p2-activity">
+    <mxGraphModel page="1" pageWidth="1600" pageHeight="2320">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="edge0" parent="1" edge="1" source="start" target="ep" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="680" y="210" />
+              <mxPoint x="680" y="245" />
+              <mxPoint x="610" y="245" />
+              <mxPoint x="610" y="280" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label0" parent="1" vertex="1" value="parallel" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="573" y="219" width="74" height="30" />
+        </mxCell>
+        <mxCell id="edge1" parent="1" edge="1" source="start" target="bva" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="920" y="210" />
+              <mxPoint x="920" y="245" />
+              <mxPoint x="990" y="245" />
+              <mxPoint x="990" y="280" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label1" parent="1" vertex="1" value="parallel" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="953" y="219" width="74" height="30" />
+        </mxCell>
+        <mxCell id="edge2" parent="1" edge="1" source="ep" target="merge" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="610" y="360" />
+              <mxPoint x="610" y="395" />
+              <mxPoint x="700" y="395" />
+              <mxPoint x="700" y="430" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge3" parent="1" edge="1" source="bva" target="merge" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="990" y="360" />
+              <mxPoint x="990" y="395" />
+              <mxPoint x="900" y="395" />
+              <mxPoint x="900" y="430" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge4" parent="1" edge="1" source="merge" target="g1" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="800" y="510" />
+              <mxPoint x="800" y="590" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label4" parent="1" vertex="1" value="valid" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="814" y="537" width="52" height="26" />
+        </mxCell>
+        <mxCell id="edge5" parent="1" edge="1" source="g1" target="junit" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="800" y="680" />
+              <mxPoint x="800" y="740" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label5" parent="1" vertex="1" value="initial accept" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="841" y="697" width="119" height="30" />
+        </mxCell>
+        <mxCell id="edge6" parent="1" edge="1" source="junit" target="original" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="800" y="820" />
+              <mxPoint x="800" y="900" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge7" parent="1" edge="1" source="original" target="g2" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="800" y="980" />
+              <mxPoint x="800" y="1060" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label7" parent="1" vertex="1" value="passing" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="826" y="1007" width="80" height="30" />
+        </mxCell>
+        <mxCell id="edge8" parent="1" edge="1" source="original" target="repair_o" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="1050" y="940" />
+              <mxPoint x="1180" y="940" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label8" parent="1" vertex="1" value="failed" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="1086" y="907" width="58" height="26" />
+        </mxCell>
+        <mxCell id="edge9" parent="1" edge="1" source="repair_o" target="original" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="1350" y="900" />
+              <mxPoint x="1350" y="855" />
+              <mxPoint x="940" y="855" />
+              <mxPoint x="940" y="900" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label9" parent="1" vertex="1" value="retry" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="1105" y="827" width="50" height="30" />
+        </mxCell>
+        <mxCell id="edge10" parent="1" edge="1" source="g2" target="gap_o" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="550" y="1105" />
+              <mxPoint x="410" y="1105" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label10" parent="1" vertex="1" value="missed &gt; 0" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="427" y="1070" width="106" height="26" />
+        </mxCell>
+        <mxCell id="edge11" parent="1" edge="1" source="gap_o" target="g1" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="240" y="1060" />
+              <mxPoint x="240" y="635" />
+              <mxPoint x="550" y="635" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label11" parent="1" vertex="1" value="G1" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="266" y="637" width="38" height="26" />
+        </mxCell>
+        <mxCell id="edge12" parent="1" edge="1" source="g1" target="original" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="550" y="660" />
+              <mxPoint x="455" y="660" />
+              <mxPoint x="455" y="940" />
+              <mxPoint x="550" y="940" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label12" parent="1" vertex="1" value="GAP accept:&#10;append tests" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="303.0" y="776.0" width="124.0" height="52.0" />
+        </mxCell>
+        <mxCell id="edge13" parent="1" edge="1" source="g2" target="refactor" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="800" y="1150" />
+              <mxPoint x="800" y="1220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label13" parent="1" vertex="1" value="zero missed" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="841" y="1172" width="117" height="26" />
+        </mxCell>
+        <mxCell id="edge14" parent="1" edge="1" source="refactor" target="g3" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="800" y="1300" />
+              <mxPoint x="800" y="1380" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label14" parent="1" vertex="1" value="compiled" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="835" y="1327" width="90" height="30" />
+        </mxCell>
+        <mxCell id="edge15" parent="1" edge="1" source="refactor" target="refactor" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="1050" y="1240" />
+              <mxPoint x="1390" y="1240" />
+              <mxPoint x="1390" y="1180" />
+              <mxPoint x="990" y="1180" />
+              <mxPoint x="990" y="1220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label15" parent="1" vertex="1" value="compile failure: retry" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="1158" y="1147" width="184" height="30" />
+        </mxCell>
+        <mxCell id="edge16" parent="1" edge="1" source="g3" target="refactor" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="1050" y="1425" />
+              <mxPoint x="1450" y="1425" />
+              <mxPoint x="1450" y="1280" />
+              <mxPoint x="1050" y="1280" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label16" parent="1" vertex="1" value="code changes" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="1252" y="1387" width="135" height="30" />
+        </mxCell>
+        <mxCell id="edge17" parent="1" edge="1" source="g3" target="adapt" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="800" y="1470" />
+              <mxPoint x="800" y="1540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label17" parent="1" vertex="1" value="initial accept" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="841" y="1492" width="119" height="30" />
+        </mxCell>
+        <mxCell id="edge18" parent="1" edge="1" source="adapt" target="refactored" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="800" y="1620" />
+              <mxPoint x="800" y="1700" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge19" parent="1" edge="1" source="g3" target="refactored" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="1050" y="1450" />
+              <mxPoint x="1100" y="1450" />
+              <mxPoint x="1100" y="1660" />
+              <mxPoint x="1000" y="1660" />
+              <mxPoint x="1000" y="1700" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label19" parent="1" vertex="1" value="later accept" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="1154" y="1557" width="113" height="30" />
+        </mxCell>
+        <mxCell id="edge20" parent="1" edge="1" source="refactored" target="repair_r" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="1050" y="1740" />
+              <mxPoint x="1180" y="1740" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label20" parent="1" vertex="1" value="failed" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="1086" y="1707" width="58" height="26" />
+        </mxCell>
+        <mxCell id="edge21" parent="1" edge="1" source="repair_r" target="g3" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="1350" y="1700" />
+              <mxPoint x="1350" y="1490" />
+              <mxPoint x="1030" y="1490" />
+              <mxPoint x="1030" y="1470" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label21" parent="1" vertex="1" value="compiled" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="1355" y="1587" width="90" height="30" />
+        </mxCell>
+        <mxCell id="edge22" parent="1" edge="1" source="refactored" target="g4" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="800" y="1780" />
+              <mxPoint x="800" y="1860" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label22" parent="1" vertex="1" value="passing" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="826" y="1807" width="80" height="30" />
+        </mxCell>
+        <mxCell id="edge23" parent="1" edge="1" source="g4" target="gap_r" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="550" y="1905" />
+              <mxPoint x="410" y="1905" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label23" parent="1" vertex="1" value="missed &gt; 0" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="427" y="1870" width="106" height="26" />
+        </mxCell>
+        <mxCell id="edge24" parent="1" edge="1" source="gap_r" target="g3" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="240" y="1860" />
+              <mxPoint x="240" y="1425" />
+              <mxPoint x="550" y="1425" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label24" parent="1" vertex="1" value="G3" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="266" y="1435" width="38" height="26" />
+        </mxCell>
+        <mxCell id="edge25" parent="1" edge="1" source="g3" target="refactored" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="550" y="1450" />
+              <mxPoint x="455" y="1450" />
+              <mxPoint x="455" y="1740" />
+              <mxPoint x="550" y="1740" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label25" parent="1" vertex="1" value="GAP accept:&#10;append tests" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="288.0" y="1576.0" width="124.0" height="52.0" />
+        </mxCell>
+        <mxCell id="edge26" parent="1" edge="1" source="g4" target="done" style="endArrow=block;strokeColor=#5F6D86;strokeWidth=2;rounded=0;">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="800" y="1950" />
+              <mxPoint x="800" y="2030" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="label26" parent="1" vertex="1" value="zero missed" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=19;">
+          <mxGeometry as="geometry" x="841" y="1977" width="117" height="26" />
+        </mxCell>
+        <mxCell id="start" parent="1" vertex="1" value="START&#10;Create run workspace + SQLite checkpoint" style="rounded=1;whiteSpace=wrap;fillColor=#EAF0FF;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="500" y="130" width="600" height="80" />
+        </mxCell>
+        <mxCell id="ep" parent="1" vertex="1" value="EP generation" style="rounded=1;whiteSpace=wrap;fillColor=#EAF0FF;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="450" y="280" width="320" height="80" />
+        </mxCell>
+        <mxCell id="bva" parent="1" vertex="1" value="BVA generation" style="rounded=1;whiteSpace=wrap;fillColor=#EAF0FF;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="830" y="280" width="320" height="80" />
+        </mxCell>
+        <mxCell id="merge" parent="1" vertex="1" value="JOIN + DEDUPE&#10;Wait for both generators; reject conflicts" style="rounded=1;whiteSpace=wrap;fillColor=#EAF0FF;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="500" y="430" width="600" height="80" />
+        </mxCell>
+        <mxCell id="g1" parent="1" vertex="1" value="G1 · HUMAN CASE REVIEW&#10;Interrupt / persist / resume" style="rounded=1;whiteSpace=wrap;fillColor=#FFF0CF;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="550" y="590" width="500" height="90" />
+        </mxCell>
+        <mxCell id="junit" parent="1" vertex="1" value="Materialize approved JUnit&#10;P4 project adapter" style="rounded=1;whiteSpace=wrap;fillColor=#EAF0FF;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="550" y="740" width="500" height="80" />
+        </mxCell>
+        <mxCell id="original" parent="1" vertex="1" value="Build + test original&#10;Maven / Surefire / JaCoCo" style="rounded=1;whiteSpace=wrap;fillColor=#EAF0FF;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="550" y="900" width="500" height="80" />
+        </mxCell>
+        <mxCell id="g2" parent="1" vertex="1" value="G2 · COVERAGE&#10;Passing tests + zero missed branches" style="rounded=1;whiteSpace=wrap;fillColor=#DCF4EA;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="550" y="1060" width="500" height="90" />
+        </mxCell>
+        <mxCell id="refactor" parent="1" vertex="1" value="State-pattern refactor + compile&#10;Version prompt; replace source tree" style="rounded=1;whiteSpace=wrap;fillColor=#EAF0FF;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="550" y="1220" width="500" height="80" />
+        </mxCell>
+        <mxCell id="g3" parent="1" vertex="1" value="G3 · HUMAN REFACTOR REVIEW&#10;Code, notes, cases, and tests" style="rounded=1;whiteSpace=wrap;fillColor=#FFF0CF;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="550" y="1380" width="500" height="90" />
+        </mxCell>
+        <mxCell id="adapt" parent="1" vertex="1" value="Adapt target metadata&#10;Reuse approved JUnit unchanged" style="rounded=1;whiteSpace=wrap;fillColor=#EAF0FF;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="550" y="1540" width="500" height="80" />
+        </mxCell>
+        <mxCell id="refactored" parent="1" vertex="1" value="Build + test refactored&#10;Maven / Surefire / JaCoCo" style="rounded=1;whiteSpace=wrap;fillColor=#EAF0FF;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="550" y="1700" width="500" height="80" />
+        </mxCell>
+        <mxCell id="g4" parent="1" vertex="1" value="G4 · COVERAGE&#10;Passing tests + zero missed branches" style="rounded=1;whiteSpace=wrap;fillColor=#DCF4EA;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="550" y="1860" width="500" height="90" />
+        </mxCell>
+        <mxCell id="done" parent="1" vertex="1" value="COMPLETE&#10;Both targets verified; write report" style="rounded=1;whiteSpace=wrap;fillColor=#DCF4EA;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="550" y="2030" width="500" height="80" />
+        </mxCell>
+        <mxCell id="repair_o" parent="1" vertex="1" value="Repair original sources&#10;Tests stay unchanged" style="rounded=1;whiteSpace=wrap;fillColor=#F0EBFA;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="1180" y="900" width="340" height="80" />
+        </mxCell>
+        <mxCell id="gap_o" parent="1" vertex="1" value="Propose original GAP&#10;New cases + new JUnit" style="rounded=1;whiteSpace=wrap;fillColor=#F0EBFA;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="70" y="1060" width="340" height="90" />
+        </mxCell>
+        <mxCell id="repair_r" parent="1" vertex="1" value="Repair refactored sources&#10;Compile; renew G3" style="rounded=1;whiteSpace=wrap;fillColor=#F0EBFA;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="1180" y="1700" width="340" height="80" />
+        </mxCell>
+        <mxCell id="gap_r" parent="1" vertex="1" value="Propose refactored GAP&#10;New cases + new JUnit" style="rounded=1;whiteSpace=wrap;fillColor=#F0EBFA;strokeColor=#536480;fontSize=23;">
+          <mxGeometry as="geometry" x="70" y="1860" width="340" height="90" />
+        </mxCell>
+        <mxCell id="note0" parent="1" vertex="1" value="P2 · LANGGRAPH ACTIVITY" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=36;">
+          <mxGeometry as="geometry" x="557" y="26" width="486" height="38" />
+        </mxCell>
+        <mxCell id="note1" parent="1" vertex="1" value="Injected Ollama model · durable human review · measured Java execution" style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=22;">
+          <mxGeometry as="geometry" x="437" y="78" width="726" height="32" />
+        </mxCell>
+        <mxCell id="note2" parent="1" vertex="1" value="Rejections return to the producer: G1 → generation or original GAP; G3 → refactor or refactored GAP." style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=22;">
+          <mxGeometry as="geometry" x="304" y="2146" width="993" height="32" />
+        </mxCell>
+        <mxCell id="note3" parent="1" vertex="1" value="Generation, refactor, repairs, and GAP proposals: at most 5 attempts per phase/target. Invalid artifacts → BLOCKED." style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=22;">
+          <mxGeometry as="geometry" x="231" y="2186" width="1139" height="32" />
+        </mxCell>
+        <mxCell id="note4" parent="1" vertex="1" value="Refactored repair compilation failures retry repair. Coverage excludes main(); missing or empty reports cannot pass." style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=22;">
+          <mxGeometry as="geometry" x="238" y="2226" width="1124" height="32" />
+        </mxCell>
+        <mxCell id="note5" parent="1" vertex="1" value="Graph concurrency does not guarantee simultaneous Ollama inference. Model output never approves a human gate." style="text;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=none;fontSize=22;">
+          <mxGeometry as="geometry" x="236" y="2266" width="1128" height="32" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
