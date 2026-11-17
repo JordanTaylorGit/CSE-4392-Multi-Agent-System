@@ -132,10 +132,10 @@ python3 .agents/testgen/materialize_junit.py \
 ```
 
 A missing/rejected/stale G1 decision or an unknown case field is an error, not permission to
-invent expected outcomes. Existing hand-written Java tests are not overwritten. The current
-adapter supports **original SeasonSwitch cases only**; refactored-source adaptation and
-support for other projects must be added and verified separately. This step writes the Java
-source but does not invoke Maven or claim coverage (those belong to Phases D/E).
+invent expected outcomes. Existing hand-written Java tests are not overwritten. The current adapter supports original SeasonSwitch cases and adapted tests against
+Jordan's compatible State-pattern refactor. Other project profiles still need their
+own adapters. The materializer writes Java but does not invoke Maven or claim
+coverage (those belong to Phases D/E).
 
 ### Phase D — run and repair (steps 5–6)
 
@@ -154,10 +154,25 @@ Compute branch coverage. Below `profile.coverage.threshold`: write `coverage-rep
 
 ### Phase A' — re-target, do not regenerate (step 10)
 
-Take `testcases_final.json` and the existing test source. Produce `testcases_refactored.json`
-(`target: refactored`) and a second test class. Test **logic is unchanged**; only the target,
-imports, and setup wiring may change. Any change to an `expected` value needs a justification in
-`refactor-notes.md`. The EP/BVA subagents are NOT spawned here — the approved set already exists.
+After the orchestrator's G3 approval of the refactor, reuse the G1-approved
+`testcases_final.json`; do **not** regenerate EP/BVA cases. Loc's harness copies that
+case set to `testcases_refactored.json` and changes only the target fields, then
+reuses the same JUnit source with Maven's refactored profile. Where a standalone
+second JUnit class is useful, the Phase C helper accepts `--mode adapt` with the
+**original** G1-approved case set and renders a second class. It checks the
+original G1 hash, and copies cases in memory before retargeting; it does not
+alter any expectations or the original file. G3 remains the responsibility of
+the LangGraph orchestrator, not this CLI. If behavior changes, report the
+failure for review rather than silently rewriting expected values.
+
+```bash
+python3 .agents/testgen/materialize_junit.py --mode adapt \
+  --profile projects/seasonswitch/profile.json \
+  --cases runs/<run>/testcases_final.json \
+  --report runs/<run>/dedupe-report.md \
+  --log runs/<run>/hitl_decisions.json \
+  --out java/src/test/java/cse4392/SeasonSwitchAdaptedTest.java
+```
 
 ### Phases D and E, on `target=refactored` (steps 11–12)
 

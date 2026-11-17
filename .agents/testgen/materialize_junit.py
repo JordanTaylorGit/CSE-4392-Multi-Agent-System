@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase C: turn G1-approved original test cases into JUnit using a project adapter.
+"""Turn G1-approved original cases into original or adapted JUnit tests.
 
 This module knows the shared test-case contract, not any project's units or
 Java behavior. Project-specific rendering belongs to projects/<project>/junit_adapter.py.
@@ -8,6 +8,7 @@ It is a CLI helper; it does not resume LangGraph or approve a human gate.
 from __future__ import annotations
 
 import argparse
+from copy import deepcopy
 import importlib.util
 from pathlib import Path
 import re
@@ -73,10 +74,17 @@ def materialize(args: argparse.Namespace) -> Path:
         check_g1(SimpleNamespace(cases=args.cases, report=args.report, log=args.log))
     except (ReviewError, MergeError) as exc:
         raise MaterializeError(f"G1 approval required: {exc}") from exc
-    if cases["target"] != "original":
-        raise MaterializeError("Phase C only supports original cases; refactored tests use adapt mode")
+    # G1 is always checked against the byte-for-byte original artifact above.
+    # In adapt mode, only the target label changes; expectations stay untouched.
+    mode = getattr(args, "mode", "generate")
+    if mode not in ("generate", "adapt"):
+        raise MaterializeError("Mode must be generate or adapt")
+    render_cases = deepcopy(cases["cases"])
+    if mode == "adapt":
+        for case in render_cases:
+            case["target"] = "refactored"
     try:
-        source = adapter.render(cases["cases"], profile, output.stem)
+        source = adapter.render(render_cases, profile, output.stem)
     except ValueError as exc:
         raise MaterializeError(f"Unsupported test-case vocabulary: {exc}") from exc
     if not isinstance(source, str) or not source.startswith(MARKER):
@@ -97,6 +105,8 @@ def materialize(args: argparse.Namespace) -> Path:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--mode", choices=("generate", "adapt"), default="generate",
+                        help="Adapt reuses G1-approved expectations against the refactored target")
     parser.add_argument("--profile", type=Path, required=True)
     parser.add_argument("--cases", type=Path, required=True, help="G1-reviewed testcases_final.json")
     parser.add_argument("--report", type=Path, required=True, help="G1-reviewed dedupe-report.md")
@@ -108,7 +118,7 @@ def main(argv: list[str] | None = None) -> int:
     except MaterializeError as exc:
         print(f"PHASE C BLOCKED: {exc}", file=sys.stderr)
         return 1
-    print(f"Phase C: wrote G1-approved JUnit tests to {output}")
+    print(f"P4 {args.mode}: wrote G1-approved JUnit tests to {output}")
     return 0
 
 
