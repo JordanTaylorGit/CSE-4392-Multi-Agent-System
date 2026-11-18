@@ -206,7 +206,10 @@ def methods(jacoco: Path) -> list[tuple[str, int, int]]:
         return []
     out = []
     for cls in ET.parse(jacoco).getroot().iter("class"):
-        inner = cls.get("name").split("$")[1] + "." if "$" in cls.get("name") else ""
+        # SeasonSwitch's own methods stay bare; inner classes and state classes get a prefix,
+        # since both CoolState and HeatState have a timerOff().
+        simple = cls.get("name").rsplit("/", 1)[-1]
+        inner = simple.split("$", 1)[1] + "." if "$" in simple else ("" if simple == "SeasonSwitch" else simple + ".")
         for m in cls.findall("method"):
             b = [c for c in m.findall("counter") if c.get("type") == "BRANCH"]
             if b and m.get("name") != "main":
@@ -299,12 +302,20 @@ def build(out: Path) -> list[str]:
 
     # (b) activity diagram -------------------------------------------------
     s = new("(b) Activity diagram")
-    header(s, "Activity diagram", "One run of the orchestrator, from the team plan's graph (TEAM-PLAN §2.5).")
+    header(s, "Activity diagram", "One run of the pipeline, from start to HALT.")
     png = REPO_ROOT / "docs" / "activity.png"
     if png.exists():
-        pic = s.shapes.add_picture(str(png), MARGIN, Inches(1.9), height=Inches(5.0))
-        if pic.width > body_w:
-            pic.width, pic.height = int(body_w), int(pic.height * body_w / pic.width)
+        pic = s.shapes.add_picture(str(png), MARGIN, Inches(1.85), height=Inches(5.15))
+        pic.line.color.rgb = LINE
+        pic.line.width = Pt(0.75)
+        bullets(s, MARGIN + pic.width + Inches(0.6), Inches(2.0), body_w - pic.width - Inches(0.6), Inches(4.8), [
+            ("Fork and join: ", "EP and BVA generation run in parallel; the merge waits for both and rejects conflicting cases."),
+            ("G1, human: ", "the run stops until a person accepts the test cases or asks for changes."),
+            ("Repair: ", "a failing build sends the source code back for repair; the tests stay unchanged. At most 5 tries."),
+            ("G2 and G4, coverage: ", "continue only with passing tests and zero missed branches; otherwise propose GAP tests, which go back to human review."),
+            ("G3, human: ", "a person reviews the refactored code, notes and tests before the tests are re-run on it."),
+            ("Source: ", "docs/activity.drawio (Loc), rendered by scripts/render_activity.py."),
+        ], size=15)
     else:
         steps = [("testgen", "generate · original", BLUE_TINT), ("G1", "review cases", AMBER_TINT),
                  ("run + repair", "≤ 5 loops", SURFACE), ("coverage gate", "100% branches", GREEN_TINT),
@@ -366,7 +377,7 @@ def build(out: Path) -> list[str]:
     # (d) code per component ----------------------------------------------
     for title, owner, what in [
         ("EP and BVA subagents", "P1 (Kyle)", "Frontmatter, how the profile drives the cases, and one case each from testcases_ep.json and testcases_bva.json."),
-        ("Orchestrator", "P2 (Loc)", "The 12-step state machine, the four gates, the refusal rules, and how STATE.md lets a run resume."),
+        ("Orchestrator", "P2 (Loc)", "The LangGraph graph in harness/graph.py: the parallel EP/BVA fan-out, the G1 and G3 interrupts, the 5-loop caps, and resuming from the SQLite checkpoint."),
         ("Refactor skill and prompt mutations", "P5 (Jordan)", "SeasonState and the concrete states, plus the table of prompt versions: what changed and why."),
     ]:
         s = new("(d) Code")
@@ -388,7 +399,7 @@ def build(out: Path) -> list[str]:
             arrow(s, x + bw, Inches(2.72), x + bw + gap, Inches(2.72))
         x += bw + gap
     hole(s, MARGIN, Inches(3.9), body_w, Inches(1.6), "P4 (Miguel)",
-         "Add a code excerpt and the explanation. Branch miguel/p4-testgen-skill has the skill and its three helper scripts (37 of 38 helper tests pass on macOS).")
+         "Add a code excerpt and the explanation. The skill and its helpers are on miguel/p4-testgen-skill, including adapt mode for the refactored target.")
 
     # (e) tests, results, coverage ----------------------------------------
     s = new("(e) Tests and coverage")
@@ -404,44 +415,40 @@ def build(out: Path) -> list[str]:
     hole(s, Inches(8.4), Inches(2.0), Inches(4.2), Inches(3.0), "P1 / P4",
          "These are Jordan's hand-written safety-net tests. Replace or add the pipeline's own case set (testcases_final.json) once a full run exists.", size=13)
 
-    s = new()
-    header(s, "Original code: results and branch coverage",
-           f"From {orig['dir'].relative_to(REPO_ROOT)}." if orig else "No original run in runs/ yet.")
-    if orig:
-        stats = [(f"{orig['tests'] - orig['failures'] - orig['errors']}/{orig['tests']}", "tests pass"),
-                 (f"{orig['covered']}/{orig['covered'] + orig['missed']}", "branches covered"),
-                 (f"{orig['pct']:g}%", "branch coverage")]
+    def results(run, title, takeaway, note, missing):
+        s = new()
+        header(s, title, f"{takeaway} From {run['dir'].relative_to(REPO_ROOT)}." if run else takeaway)
+        if not run:
+            hole(s, MARGIN, Inches(2.0), body_w, Inches(2.2), *missing)
+            return
+        stats = [(f"{run['tests'] - run['failures'] - run['errors']}/{run['tests']}", "tests pass"),
+                 (f"{run['covered']}/{run['covered'] + run['missed']}", "branches covered"),
+                 (f"{run['pct']:g}%", "branch coverage")]
         x = MARGIN
         for big, small in stats:
             text(s, x, Inches(2.0), Inches(3.4), Inches(0.9), big, size=44, bold=True, color=GREEN)
             text(s, x, Inches(2.9), Inches(3.4), Inches(0.4), small, size=15, color=MUTED)
             x += Inches(3.6)
-        y = Inches(3.7)
-        for name, cov, miss in orig["methods"]:
+        y, bar_w = Inches(3.7), Inches(6.0)
+        for name, cov, miss in run["methods"]:
             total = cov + miss
-            text(s, MARGIN, y, Inches(3.4), Inches(0.38), name, size=14, font=MONO, anchor=MSO_ANCHOR.MIDDLE)
-            bar_w = Inches(6.5)
-            rect(s, MARGIN + Inches(3.5), y + Inches(0.08), bar_w, Inches(0.22), fill=SURFACE, radius=0.5)
+            text(s, MARGIN, y, Inches(3.9), Inches(0.38), name, size=14, font=MONO, anchor=MSO_ANCHOR.MIDDLE)
+            rect(s, MARGIN + Inches(4.0), y + Inches(0.08), bar_w, Inches(0.22), fill=SURFACE, radius=0.5)
             if cov:
-                rect(s, MARGIN + Inches(3.5), y + Inches(0.08), int(bar_w * cov / total), Inches(0.22), fill=GREEN, radius=0.5)
+                rect(s, MARGIN + Inches(4.0), y + Inches(0.08), int(bar_w * cov / total), Inches(0.22), fill=GREEN, radius=0.5)
             text(s, MARGIN + Inches(10.2), y, Inches(1.8), Inches(0.38), f"{cov}/{total}", size=14, anchor=MSO_ANCHOR.MIDDLE)
             y += Inches(0.48)
-        text(s, MARGIN, y + Inches(0.1), body_w, Inches(0.4),
-             "main() (8 branches) is left out: it blocks forever and calls System.exit. JaCoCo 0.8.12, JUnit 5.10.2, JDK 17.",
-             size=12, color=MUTED)
-    else:
-        hole(s, MARGIN, Inches(2.0), body_w, Inches(2), "P3", "Run scripts/coverage.sh original and save the run in runs/.")
+        text(s, MARGIN, y + Inches(0.1), body_w, Inches(0.7), note, size=12, color=MUTED)
 
-    s = new()
-    header(s, "Refactored code: results and branch coverage", "Same tests, re-targeted with the refactored profile.")
-    if refac:
-        text(s, MARGIN, Inches(2.0), body_w, Inches(1),
-             f"{refac['tests']} tests, {refac['failures'] + refac['errors']} failing; branches {refac['covered']}/"
-             f"{refac['covered'] + refac['missed']} = {refac['pct']:g}%  ({refac['dir'].relative_to(REPO_ROOT)})", size=24, bold=True)
-    else:
-        hole(s, MARGIN, Inches(2.0), body_w, Inches(2.2), "P5 + P3",
-             "Needs java/src/refactored (Jordan). Then P3 runs scripts/coverage.sh refactored and saves the run; "
-             "this slide fills itself in on the next build.")
+    results(orig, "Original code: results and branch coverage", "",
+            "main() (8 branches) is left out: it blocks forever and calls System.exit. JaCoCo 0.8.12, JUnit 5.10.2, JDK 17.",
+            ("P3", "Run scripts/coverage.sh original and save the run in runs/."))
+    results(refac, "Refactored code: results and branch coverage",
+            "The same 21 tests, unchanged; only the Maven profile differs.",
+            "28 branches became 8: the five switch (state) blocks turned into calls on the current state object, "
+            "which JaCoCo doesn't count as branches. What's left are the 68/77 checks and the room tick. Every line outside main() is covered.",
+            ("P5 + P3", "Needs java/src/refactored (Jordan). Then P3 runs scripts/coverage.sh refactored and saves "
+                        "the run; this slide fills itself in on the next build."))
 
     s = new()
     header(s, "Human-in-the-loop evidence", "Each gate stops the run and records who decided what, and when.")
@@ -465,7 +472,7 @@ def build(out: Path) -> list[str]:
     header(s, "Conclusion and future work", "")
     hole(s, MARGIN, Inches(2.0), body_w, Inches(2.2), "P5 (Jordan)",
          "What the system achieved, measured against the objectives on slide 3, and what comes next "
-         "(for example, a code-executed runner built from the skill frontmatter).")
+         "(for example, a smaller model that runs on a 16 GB laptop, or more projects behind the same profile).")
 
     s = new("Questions")
     text(s, MARGIN, Inches(2.8), body_w, Inches(1.2), "Questions?", size=48, bold=True, align=PP_ALIGN.CENTER)
