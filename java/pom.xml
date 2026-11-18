@@ -12,7 +12,7 @@
 
   <!--
     The original and refactored classes are both named `SeasonSwitch` in the same package, so they
-    cannot share a classpath. Profiles swap the main source root while src/test/java stays put --
+    cannot share a classpath. Profiles swap the main source root while src/test/java stays put —
     which is what makes "reuse the existing tests" literal rather than aspirational.
 
       mvn -P original   test
