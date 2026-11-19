@@ -8,6 +8,7 @@ everything referenced by `orchestrates:` exists, and that every `schema:` points
 """
 from __future__ import annotations
 
+import ast
 import json
 import re
 import sys
@@ -75,6 +76,23 @@ def main() -> int:
     if orphans:
         errors.append(f"stages not reachable from orchestrator: {sorted(orphans)}")
 
+    orchestrator = stages.get("orchestrator", {})
+    gates = orchestrator.get("review_gates", [])
+    if not isinstance(gates, list) or sorted(gates) != ["review_refactored", "review_testcases"]:
+        errors.append("orchestrator: declare both review_testcases and review_refactored")
+    module, _, function = orchestrator.get("runtime", "").partition(":")
+    runtime = ROOT / (module.replace(".", "/") + ".py")
+    if not function or not runtime.is_file():
+        errors.append("orchestrator: runtime must reference an existing module:function")
+    else:
+        try:
+            tree = ast.parse(runtime.read_text(encoding="utf-8"))
+            if not any(isinstance(node, ast.FunctionDef) and node.name == function
+                       for node in tree.body):
+                errors.append(f"orchestrator: runtime function '{function}' not found")
+        except SyntaxError as exc:
+            errors.append(f"orchestrator: invalid runtime Python: {exc}")
+
     # project profiles
     profiles = sorted((ROOT / "projects").glob("*/profile.json"))
     if not profiles:
@@ -105,8 +123,8 @@ def main() -> int:
             print(f"  - {error}")
         return 1
 
-    print(f"skill graph ok: {len(stages)} stages, "
-          f"{sum(1 for m in stages.values() if m.get('gate') == 'human')} HITL gates, "
+    print(f"skill declarations ok: {len(stages)} skills, "
+          f"{len(gates)} declared human gates, "
           f"{len(profiles)} project profiles")
     return 0
 

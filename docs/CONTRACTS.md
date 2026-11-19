@@ -4,12 +4,14 @@ Change these only by group sign-off. Everything else is negotiable.
 
 ## 1. Skill frontmatter
 
-Every file in `.agents/` except `_TEMPLATE.md` declares the graph. `scripts/validate_skills.py`
-checks it in CI; the orchestrator skill (`.agents/orchestrator/SKILL.md`) executes it.
+Each stage directory under `.agents/` except `_template` declares its skill contract.
+`scripts/validate_skills.py` checks those declarations in CI.
+The orchestrator skill specifies the workflow, and `harness/graph.py` executes it with LangGraph.
+Existing required fields and JSON schemas remain unchanged.
 
 | key | required | meaning |
 |-----|----------|---------|
-| `id` | yes | unique; matches the filename stem |
+| `id` | yes | unique; matches the stage directory |
 | `order` | yes | integer; execution order |
 | `executor` | yes | `agent` or `llm` |
 | `inputs` | yes | paths, `root:`-prefixed for repo files, otherwise run-dir relative |
@@ -22,13 +24,15 @@ checks it in CI; the orchestrator skill (`.agents/orchestrator/SKILL.md`) execut
 | `orchestrates` | no | stage ids this stage dispatches (orchestrator only) |
 | `subskills` | no | skill ids this stage may spawn as subagents |
 | `parameters` | no | named inputs the dispatcher supplies (e.g. `target`, `mode`) |
+| `runtime` | no | orchestrator Python entry point (`module:function`) |
+| `review_gates` | no | human gates implemented by the runtime |
 
 Rules:
 - A stage writes only its own `outputs`. Anything else is a contract violation.
 - Subagents must not read each other's outputs — the parent joins them.
-- Loops are declared with `on_reject`, never implemented ad hoc inside a skill.
-- `root:` outputs are the only way a stage may touch `java/src/`.
-- `ep-tests` and `bva-tests` are only ever invoked by `testgen`, never by the orchestrator.
+- Loop routing is explicit in the orchestrator specification and executable graph; models do not control retries.
+- Source outputs are resolved within the per-run workspace; model writes are restricted to the current Java source target.
+- EP/BVA remain the two generation phases of `testgen`; the runtime schedules them as parallel graph nodes.
 
 ## 2. Test case shape
 
@@ -53,29 +57,59 @@ Rules:
 
 ## 3. Run directory
 
-```
-runs/<UTC>/
-  STATE.md                   <- resume point, updated after every step
-  run-report.md
+```text
+runs/<UTC>-<unique-suffix>/
+  run.json                     # project and source-repository metadata
+  checkpoints.sqlite           # authoritative LangGraph state and pending interrupts
+  STATE.md  status.json         # regenerated state projections
+  run-report.md  coverage.txt   # measured results and disclosed scope
+  workspace/                   # isolated copy of skills, profiles, schemas, and Java
+    java/src/{original,refactored,test}/java/
   testcases_ep.json  testcases_bva.json  testcases_final.json
-  testcases_refactored.json  testcases_extra.json
-  surefire/          jacoco.xml  coverage.txt
-  changelog.md       hitl_decisions.json  refactor-review.md
-  refactor-notes.md  dedupe-report.md
+  testcases_refactored.json     # approved cases with refactored target metadata
+  testcases_proposed.json       # pending supplemental cases; not approval
+  dedupe-report.md  hitl_decisions.json
+  refactor-notes.md  changelog.md
+  prompts/refactor-vN.json
+  transcripts/<stage>-<id>.json
+  changes/<id>.diff
+  <target>/attempt-<N>/        # Maven log, Surefire reports, jacoco.xml
+  compile-<attempt>.log         # refactor compilation evidence
 ```
 
-`hitl_decisions.json` and `STATE.md` are graded evidence. Do not hand-edit them.
+`hitl_decisions.json` and `STATE.md` are evidence; do not hand-edit them.
+The runtime creates artifacts when their stages execute, so a paused run will not contain later-stage outputs.
+The target-specific directories preserve each attempt rather than overwriting a single top-level coverage report.
 
-## 4. Running it
+## 4. Runtime and decisions
 
-```
-open your agentic harness, point it at .agents/orchestrator/SKILL.md, and let it run
-```
+Run `uv run python -m harness start --project seasonswitch`.
+Use `status --run <directory>` to inspect and `resume --run <directory> --decision <file>` to submit an actual human review.
+See the README for installation and decision examples.
+SQLite checkpoints replace manual step-number resume.
+The main skill remains the workflow specification and is retained for future expansion.
 
-That one skill is the go button. There is no runner to install or invoke.
+The decision shape remains `schemas/hitl_decision.schema.json`.
+The harness additionally requires a nonblank reviewer and an exact current `artifact_sha256`.
+An acceptance has an empty `requested_changes` array; a rejection requires nonblank change requests.
+G1 hashes the reviewed case bytes, matching P4's helper, and separately guards the surrounding artifacts with a checkpointed fingerprint.
+G3 hashes source, notes, tests, and case files together.
+No model can supply a human approval, and a stale pending review cannot authorize changed files.
 
-## 5. Build contract
+GAP proposals use the existing `GAP` method and schema.
+They may refer to uncovered callback methods identified in JaCoCo beyond the initial EP/BVA profile vocabulary.
+New JUnit files must end in `Test.java`, remain append-only, and pass the appropriate G1/G3 review before use.
+Cases and expected values approved earlier remain intact through adaptation and subsequent retries.
 
-- `mvn -P original test` / `mvn -P refactored test`
-- `scripts/coverage.sh <target>` prints `target covered missed pct`
-- JDK 17. Nothing else.
+## 5. Build and completion
+
+- JDK 17 and Maven; the harness runs `mvn -B -P <target> clean test jacoco:report`.
+- `scripts/coverage.sh <target>` remains P3's standalone helper.
+- Both targets require actual passing tests and zero missed method-level branches, excluding `main()` as in P3's scope.
+- Missing reports, skipped tests, an empty suite, or zero measurable branches cannot pass.
+- The original JUnit suite is reused unchanged against the refactored source root.
+- Generation, refactor, repairs, and gap proposals each have a five-attempt budget per applicable phase/target.
+- A run is complete only after both measured coverage gates pass and required human reviews have been recorded.
+
+The lint script checks declarations, schemas, profiles, and the declared runtime function.
+It does not execute stages or prove that the assignment pipeline has completed.

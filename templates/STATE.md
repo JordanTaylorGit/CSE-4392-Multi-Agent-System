@@ -1,31 +1,29 @@
 # Run state
 
 - run_id: `<RUN_ID>`
-- status: `in_progress`        <!-- in_progress | complete | aborted -->
-- current_step: `1`
-- started_utc: `<ISO-8601>`
-- reviewer: `<name>`
+- status: `in_progress` <!-- in_progress | waiting_for_human | blocked | complete -->
+- next_nodes: `<LANGGRAPH_NEXT_NODES>`
 
-This file is the resume point. Update it after every step. If the session dies, the orchestrator
-reads `current_step` and continues from there instead of restarting.
+SQLite checkpoints are the resume source; this file is a readable projection.
+The CLI rewrites this file from graph state after execution updates and on status inspection.
+Do not edit it to skip a stage or approve a gate.
 
-## Step log
+## Stage attempts
 
-| step | stage | status | started_utc | finished_utc | notes |
-|------|-------|--------|-------------|--------------|-------|
-| 1 | testgen (generate, original) | pending | | | |
-| 2 | refactor-state | pending | | | |
-| 3 | G3 HITL review | pending | | | |
-| 4 | testgen (adapt, refactored) | pending | | | |
-| 5 | halt | pending | | | |
+| Stage | Attempts |
+| --- | ---: |
+| generation | 0 |
+| refactor | 0 |
+| repair_original | 0 |
+| repair_refactored | 0 |
+| gap_original | 0 |
+| gap_refactored | 0 |
 
-## Gate iterations
+## Pending human review
 
-| gate | attempts | last outcome |
-|------|----------|--------------|
-| G1 (inside testgen) | 0 | |
-| G3 | 0 | |
+The CLI inserts the pending gate, reviewed artifact paths, and exact artifact hash here.
+Supply a separate decision JSON after actual review; do not edit the evidence log.
 
-## Open questions for the human
+## Blocked
 
-<!-- Anything the orchestrator stopped on. Empty means nothing is blocked. -->
+The CLI records the stage and reason when validation or an attempt limit stops a run.
