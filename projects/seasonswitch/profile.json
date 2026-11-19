@@ -35,6 +35,6 @@
     "state is static: reset it to OFF before every case, or test order decides results",
     "never start either javax.swing.Timer; call timerOff() directly",
     "capture System.out; most outcomes are only observable as printed text",
-    "drive state through the public API, never by assigning `state` -- the refactored version has no int field"
+    "drive state through the public API, never by assigning `state`; the current State-pattern refactor retains a compatibility int field, but tests must not depend on assigning it"
   ]
 }
