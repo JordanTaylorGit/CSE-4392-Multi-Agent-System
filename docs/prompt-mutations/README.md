@@ -15,11 +15,11 @@ Verdicts come only from real runs. Anything not yet run says `pending`.
 
 | version | mutation | hypothesis | LLM / date | compiles | tests pass | verdict | notes |
 |---------|----------|------------|------------|----------|------------|---------|-------|
-| v01 | naive: "refactor using the State pattern" | baseline; shows what an unguided LLM does | pending | pending | pending | pending | |
-| v02 | + exact public interface and `main` verbatim | the original tests can be reused unchanged | pending | pending | pending | pending | |
-| v03 | + pattern requirements, forbid switch/if chain | forces real delegation to state objects | pending | pending | pending | pending | |
-| v04 | + invalid-state handling (int stays source of truth) and no new branches | the invalid-state test passes and coverage stays reachable | pending | pending | pending | pending | |
-| v05 | + role framing and an output format with an original-case to state mapping table | gives a mapping usable as `refactor-notes.md` and the transition matrix | ChatGPT free, 2026-11-16 | yes | 21 | Success with comments: main indentation differs, criterion 5 partial | Code was generated in 7s and followed all prompt criteria with no missing results |
+| v01 | naive: "refactor using the State pattern" | baseline; shows what an unguided LLM does | ChatGPT free, 2026-11-14 | no | n/a | Fail | Removed state and the constants the tests use. Changed main. Split AC/Heater/Room into top-level classes. First Room.java referenced a nonexistent field and was corrected in prose. |
+| v02 | + exact public interface and `main` verbatim | the original tests can be reused unchanged | ChatGPT free, 2026-11-14 | yes | 20/21 | Partial | Interface and main preserved. Invalid-state test fails because dispatch uses a private object, not state. Room still has a switch |
+| v03 | + pattern requirements, forbid switch/if chain | forces real delegation to state objects | ChatGPT free, 2026-11-15 | yes | 20/21 | Partial | Room delegates, states are singletons. setState keeps an if-chain (fix described only in prose). Same invalid-state failure |
+| v04 | + invalid-state handling (int stays source of truth) and no new branches | the invalid-state test passes and coverage stays reachable | ChatGPT free, 2026-11-15 | yes | 21/21 | success | Lookup from state via Map.getOrDefault, plus NoOpState. All state classes in one file |
+| v05 | + role framing and an output format with an original-case to state mapping table | gives a mapping usable as `refactor-notes.md` and the transition matrix | ChatGPT free, 2026-11-16 | yes | 21/21 | Success with comments: main indentation differs, criterion 5 partial | Code was generated in 7s and followed all prompt criteria with no missing results |
 
 ## How to run a version
 
