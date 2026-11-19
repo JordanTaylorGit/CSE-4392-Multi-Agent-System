@@ -250,13 +250,12 @@ def build(out: Path) -> list[str]:
     text(s, MARGIN, Inches(3.2), body_w, Inches(0.5),
          "CSE 4392/5320  ·  Team Assignment 3", size=20, color=MUTED)
     team = [
-        ("Kyle (P1, team lead)", "EP and BVA test-generation subagents"),
-        ("Loc (P2)", "orchestrator skill and activity diagram"),
+        ("Kyle Henry (P1, team lead)", "EP and BVA test-generation subagents"),
+        ("Loc Nguyen (P2)", "orchestrator skill and activity diagram"),
         ("Talha Nadeem (P3)", "Java build, coverage tooling, pipeline runs, this deck"),
-        ("Miguel (P4)", "testgen skill and project profiles"),
-        ("Jordan (P5)", "State-pattern refactor and prompt-mutation study"),
+        ("Miguel Oropeza (P4)", "testgen skill and project profiles"),
+        ("Jordan Taylor (P5)", "State-pattern refactor and prompt-mutation study"),
     ]
-    todos.append("slide 1: team: full names for Kyle, Loc, Miguel and Jordan")
     y = Inches(4.3)
     for who, role in team:
         text(s, MARGIN, y, Inches(3.6), Inches(0.4), who, size=16, bold=True,
@@ -357,15 +356,15 @@ def build(out: Path) -> list[str]:
            "Both classes are named SeasonSwitch, so a Maven profile picks which source folder to compile.")
     code(s, MARGIN, Inches(2.0), Inches(6.6), Inches(4.3), """
 <properties>
-  <active.source.dir>src/original/java</active.source.dir>
+  <main.src.dir>src/original/java</main.src.dir>
 </properties>
 <build>
-  <sourceDirectory>${active.source.dir}</sourceDirectory>
+  <sourceDirectory>${main.src.dir}</sourceDirectory>
 </build>
 <profile>
   <id>refactored</id>
   <properties>
-    <active.source.dir>src/refactored/java</active.source.dir>
+    <main.src.dir>src/refactored/java</main.src.dir>
   </properties>
 </profile>""", size=13)
     bullets(s, Inches(7.7), Inches(2.0), Inches(4.9), Inches(4.5), [
@@ -378,11 +377,41 @@ def build(out: Path) -> list[str]:
     for title, owner, what in [
         ("EP and BVA subagents", "P1 (Kyle)", "Frontmatter, how the profile drives the cases, and one case each from testcases_ep.json and testcases_bva.json."),
         ("Orchestrator", "P2 (Loc)", "The LangGraph graph in harness/graph.py: the parallel EP/BVA fan-out, the G1 and G3 interrupts, the 5-loop caps, and resuming from the SQLite checkpoint."),
-        ("Refactor skill and prompt mutations", "P5 (Jordan)", "SeasonState and the concrete states, plus the table of prompt versions: what changed and why."),
     ]:
         s = new("(d) Code")
         header(s, title, "")
         hole(s, MARGIN, Inches(2.0), body_w, Inches(2.2), owner, what)
+
+    s = new("(d) Code")
+    header(s, "Refactor skill and prompt mutations",
+           "Five prompt versions, each judged by the same 21 tests on the original behavior.")
+    code(s, MARGIN, Inches(1.95), Inches(5.3), Inches(4.0), """
+interface SeasonState {
+  void cool(SeasonSwitch context);
+  void heat(SeasonSwitch context);
+  void off(SeasonSwitch context);
+  void timerOff(SeasonSwitch context);
+  void roomActionPerformed(SeasonSwitch context);
+}
+
+// SeasonSwitch (the context)
+SeasonState getCurrentState() {
+  return STATES.getOrDefault(state, NO_OP_STATE);
+}
+public void cool() { getCurrentState().cool(this); }""", size=11)
+    table(s, MARGIN + Inches(5.5), Inches(1.95), body_w - Inches(5.5), [
+        ["Ver", "What changed", "Why", "Result"],
+        ["v01", "Naive: \"use the State pattern\"", "Baseline", "Did not compile: removed state and the constants the tests use"],
+        ["v02", "+ exact public interface, main verbatim", "Make existing tests reusable", "20/21: private state object ignores direct state writes"],
+        ["v03", "+ forbid switch/if chains; Room delegates", "Force real delegation", "20/21: same failure, leftover if-chain in setState"],
+        ["v04", "+ state stays the source of truth, no-op state, no new branches", "Fix invalid-state handling", "21/21 pass"],
+        ["v05", "+ one class per file, mapping-table output", "Structure and documentation", "21/21 pass, 100% branch coverage (excl. main)"],
+    ], [0.55, 2.15, 1.55, 2.15], size=11, row_h=0.8)
+    rect(s, MARGIN, Inches(6.25), body_w, Inches(0.55), fill=AMBER_TINT, line=AMBER, radius=0.1)
+    text(s, MARGIN + Inches(0.3), Inches(6.25), body_w - Inches(0.6), Inches(0.55),
+         "Concrete states: OffState, CoolState, HeatState (each owns its transitions), NoOpState (unrecognized values). "
+         "Prompts: docs/prompt-mutations/v01–v05.md.",
+         size=13, color=AMBER, anchor=MSO_ANCHOR.MIDDLE)
 
     s = new("(d) Code")
     header(s, "testgen: one skill for the whole test lifecycle",
@@ -398,8 +427,21 @@ def build(out: Path) -> list[str]:
         if i < len(phases) - 1:
             arrow(s, x + bw, Inches(2.72), x + bw + gap, Inches(2.72))
         x += bw + gap
-    hole(s, MARGIN, Inches(3.9), body_w, Inches(1.6), "P4 (Miguel)",
-         "Add a code excerpt and the explanation. The skill and its helpers are on miguel/p4-testgen-skill, including adapt mode for the refactored target.")
+    text(s, MARGIN, Inches(3.75), Inches(6.6), Inches(0.35),
+         ".agents/testgen/materialize_junit.py", size=12, bold=True, color=MUTED, font=MONO)
+    code(s, MARGIN, Inches(4.1), Inches(6.6), Inches(2.2), """
+render_cases = deepcopy(cases["cases"])
+if mode == "adapt":
+    for case in render_cases:
+        case["target"] = "refactored"
+source = adapter.render(render_cases, profile,
+                        output.stem)""", size=13)
+    bullets(s, Inches(7.7), Inches(3.75), Inches(4.9), Inches(2.8), [
+        ("Merge: ", "EP + BVA cases are joined; conflicts and duplicates are rejected."),
+        ("G1 first: ", "no JUnit is generated until a person approves the cases."),
+        ("Adapt mode: ", "only the target changes; the expected results stay the same."),
+        ("Same checks, new code: ", "the refactored class is held to the original behavior."),
+    ], size=14, gap=0.08)
 
     # (e) tests, results, coverage ----------------------------------------
     s = new("(e) Tests and coverage")
@@ -459,20 +501,44 @@ def build(out: Path) -> list[str]:
     # (f) lessons ----------------------------------------------------------
     s = new("(f) Lessons learned")
     header(s, "Experience and lessons learned", "Two bullets from each person; P5 collects them.")
-    bullets(s, MARGIN, Inches(2.0), Inches(6.0), Inches(4.5), [
+    text(s, MARGIN, Inches(1.85), Inches(6), Inches(0.3), "P3", size=12, bold=True, color=MUTED)
+    bullets(s, MARGIN, Inches(2.15), Inches(6.0), Inches(2.0), [
         ("Run the build on day one. ", "The scaffold's pom.xml could not be parsed (a \"--\" inside a comment), and nobody noticed until Maven ran."),
         ("Check the coverage arithmetic. ", "Adding up every counter in jacoco.xml looked plausible and was four times too high."),
-    ], size=15)
-    text(s, MARGIN, Inches(1.85), Inches(6), Inches(0.3), "P3", size=12, bold=True, color=MUTED)
-    hole(s, Inches(7.1), Inches(2.0), Inches(5.5), Inches(3.2), "P1, P2, P4, P5",
+    ], size=14)
+    text(s, MARGIN, Inches(4.1), Inches(6), Inches(0.3), "P5", size=12, bold=True, color=MUTED)
+    bullets(s, MARGIN, Inches(4.4), Inches(6.0), Inches(2.3), [
+        ("Tests first gave us an objective judge. ", "Writing a 21-test matrix over the original before refactoring made every prompt version a pass/fail result."),
+        ("Constraints beat descriptions, but passing tests aren't a design review. ", "Prompts that named what the tests depend on fixed the failures."),
+    ], size=14)
+    text(s, Inches(7.1), Inches(1.85), Inches(5.5), Inches(0.3), "P4", size=12, bold=True, color=MUTED)
+    bullets(s, Inches(7.1), Inches(2.15), Inches(5.5), Inches(2.0), [
+        ("Validate before generating. ", "Schema checks and G1 approval kept invalid or outdated cases from becoming tests."),
+        ("Separate logic from the project. ", "A reusable testgen tool and a SeasonSwitch adapter made refactored test reuse easier."),
+    ], size=14)
+    hole(s, Inches(7.1), Inches(4.4), Inches(5.5), Inches(2.0), "P1, P2",
          "Two bullets each.", size=15)
 
     # (g) conclusion -------------------------------------------------------
     s = new("(g) Conclusion")
     header(s, "Conclusion and future work", "")
-    hole(s, MARGIN, Inches(2.0), body_w, Inches(2.2), "P5 (Jordan)",
-         "What the system achieved, measured against the objectives on slide 3, and what comes next "
-         "(for example, a smaller model that runs on a 16 GB laptop, or more projects behind the same profile).")
+    col = (body_w - Inches(0.5)) / 2
+    for i, (head, items) in enumerate([
+        ("What the system achieved", [
+            "Refactored SeasonSwitch to the State pattern with the same public interface, passing all 21 existing tests unmodified",
+            "100% branch coverage on the state logic (main() excluded by agreement)",
+            "Documented the prompt study across five versions, with a transition matrix for the refactored code",
+        ]),
+        ("What comes next", [
+            "Prompt v06: extract the duplicated \"turn on, start timer, set state, print\" sequences into shared helpers without adding branches",
+            "A purer State pattern where the context holds the state object, with adapted tests, to compare against the int-based version",
+            "Repeat each prompt several times and across models, since each version was a single run",
+            "Try a smaller local model, or run the same pipeline on another project behind the same profile (e.g. grade-classifier)",
+        ]),
+    ]):
+        x = MARGIN + i * (col + Inches(0.5))
+        text(s, x, Inches(1.9), col, Inches(0.5), head, size=20, bold=True, color=GREEN if i == 0 else BLUE)
+        bullets(s, x, Inches(2.55), col, Inches(4.2), ["•  " + t for t in items], size=15, gap=0.08)
 
     s = new("Questions")
     text(s, MARGIN, Inches(2.8), body_w, Inches(1.2), "Questions?", size=48, bold=True, align=PP_ALIGN.CENTER)
