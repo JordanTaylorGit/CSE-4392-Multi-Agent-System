@@ -250,13 +250,12 @@ def build(out: Path) -> list[str]:
     text(s, MARGIN, Inches(3.2), body_w, Inches(0.5),
          "CSE 4392/5320  ·  Team Assignment 3", size=20, color=MUTED)
     team = [
-        ("Kyle (P1, team lead)", "EP and BVA test-generation subagents"),
-        ("Loc (P2)", "orchestrator skill and activity diagram"),
+        ("Kyle Henry (P1, team lead)", "EP and BVA test-generation subagents"),
+        ("Loc Nguyen (P2)", "orchestrator skill and activity diagram"),
         ("Talha Nadeem (P3)", "Java build, coverage tooling, pipeline runs, this deck"),
-        ("Miguel (P4)", "testgen skill and project profiles"),
+        ("Miguel Oropeza (P4)", "testgen skill and project profiles"),
         ("Jordan Taylor (P5)", "State-pattern refactor and prompt-mutation study"),
     ]
-    todos.append("slide 1: team: full names for Kyle, Loc and Miguel")
     y = Inches(4.3)
     for who, role in team:
         text(s, MARGIN, y, Inches(3.6), Inches(0.4), who, size=16, bold=True,
