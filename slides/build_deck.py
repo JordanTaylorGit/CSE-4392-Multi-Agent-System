@@ -428,8 +428,21 @@ public void cool() { getCurrentState().cool(this); }""", size=11)
         if i < len(phases) - 1:
             arrow(s, x + bw, Inches(2.72), x + bw + gap, Inches(2.72))
         x += bw + gap
-    hole(s, MARGIN, Inches(3.9), body_w, Inches(1.6), "P4 (Miguel)",
-         "Add a code excerpt and the explanation. The skill and its helpers are on miguel/p4-testgen-skill, including adapt mode for the refactored target.")
+    text(s, MARGIN, Inches(3.75), Inches(6.6), Inches(0.35),
+         ".agents/testgen/materialize_junit.py", size=12, bold=True, color=MUTED, font=MONO)
+    code(s, MARGIN, Inches(4.1), Inches(6.6), Inches(2.2), """
+render_cases = deepcopy(cases["cases"])
+if mode == "adapt":
+    for case in render_cases:
+        case["target"] = "refactored"
+source = adapter.render(render_cases, profile,
+                        output.stem)""", size=13)
+    bullets(s, Inches(7.7), Inches(3.75), Inches(4.9), Inches(2.8), [
+        ("Merge: ", "EP + BVA cases are joined; conflicts and duplicates are rejected."),
+        ("G1 first: ", "no JUnit is generated until a person approves the cases."),
+        ("Adapt mode: ", "only the target changes; the expected results stay the same."),
+        ("Same checks, new code: ", "the refactored class is held to the original behavior."),
+    ], size=14, gap=0.08)
 
     # (e) tests, results, coverage ----------------------------------------
     s = new("(e) Tests and coverage")
@@ -499,7 +512,12 @@ public void cool() { getCurrentState().cool(this); }""", size=11)
         ("Tests first gave us an objective judge. ", "Writing a 21-test matrix over the original before refactoring made every prompt version a pass/fail result."),
         ("Constraints beat descriptions, but passing tests aren't a design review. ", "Prompts that named what the tests depend on fixed the failures."),
     ], size=14)
-    hole(s, Inches(7.1), Inches(2.0), Inches(5.5), Inches(3.2), "P1, P2, P4",
+    text(s, Inches(7.1), Inches(1.85), Inches(5.5), Inches(0.3), "P4", size=12, bold=True, color=MUTED)
+    bullets(s, Inches(7.1), Inches(2.15), Inches(5.5), Inches(2.0), [
+        ("Validate before generating. ", "Schema checks and G1 approval kept invalid or outdated cases from becoming tests."),
+        ("Separate logic from the project. ", "A reusable testgen tool and a SeasonSwitch adapter made refactored test reuse easier."),
+    ], size=14)
+    hole(s, Inches(7.1), Inches(4.4), Inches(5.5), Inches(2.0), "P1, P2",
          "Two bullets each.", size=15)
 
     # (g) conclusion -------------------------------------------------------
