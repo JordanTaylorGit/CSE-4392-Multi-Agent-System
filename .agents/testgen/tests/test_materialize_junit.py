@@ -127,7 +127,7 @@ class MaterializeJUnitTests(unittest.TestCase):
             test_root.mkdir()
             fake = test_root / "SeasonSwitchTest.java"
             fake.write_text("// Hand-written JUnit source\n")
-            with patch.object(materialize, "ROOT", Path(temp)):
+            with patch.object(materialize, "ROOT", Path(temp).resolve()):
                 profile = {"language": "java", "test_root": "tests"}
                 with patch.object(materialize, "profile_and_adapter", return_value=(profile, None)):
                     args = SimpleNamespace(profile=self.profile, cases=self.cases_file,

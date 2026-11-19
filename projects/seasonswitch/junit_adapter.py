@@ -1,7 +1,7 @@
-"""SeasonSwitch original-source JUnit rendering, used by the generic P4 materializer.
+"""SeasonSwitch JUnit rendering for original and compatible refactored sources.
 
-The adapter validates the project-specific vocabulary instead of inventing
-setup actions or assertions. Refactored-source adaptation is not implemented.
+The project-specific adapter validates vocabulary without inventing expected
+outcomes. The generic materializer verifies G1 before adapting targets.
 """
 from __future__ import annotations
 
@@ -49,6 +49,9 @@ def render(cases: list[dict], profile: dict, class_name: str) -> str:
         raise ValueError("SeasonSwitch adapter only supports its four no-argument public methods")
     if not cases:
         raise ValueError("Test set cannot be empty")
+    targets = {case.get("target") for case in cases}
+    if len(targets) != 1 or not targets.issubset({"original", "refactored"}):
+        raise ValueError("All SeasonSwitch cases must have one supported target")
     lines = [
         MARKER,
         "package cse4392;", "",
@@ -73,8 +76,8 @@ def render(cases: list[dict], profile: dict, class_name: str) -> str:
         "    }", "",
     ]
     for case in cases:
-        if case["target"] != "original":
-            raise ValueError(f"{case['id']}: only original target is currently supported")
+        # Jordan's State-pattern refactor retains the public methods and compatibility
+        # state fields used by these tests. No expected value is rewritten here.
         unit = case["unit"]
         if unit not in supported:
             raise ValueError(f"{case['id']}: unknown unit {unit!r}")

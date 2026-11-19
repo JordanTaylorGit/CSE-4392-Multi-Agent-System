@@ -1,4 +1,4 @@
-# SeasonSwitch JUnit case vocabulary (Phase C, original target)
+# SeasonSwitch JUnit case vocabulary (generate and adapt modes)
 
 The shared test-case schemas intentionally leave `setup`, `inputs`, and `expected` open.
 For SeasonSwitch, the project adapter uses the following vocabulary. P1 should
@@ -34,6 +34,29 @@ Example case (illustrative only; not a real EP agent output):
 }
 ```
 
-The generator checks the existing human G1 approval log. It generates only the
-**original** target; refactored-source adapter and `mode=adapt` remain separate work.
-This adapter is project-specific; the main testgen CLI contains no SeasonSwitch behavior.
+The materializer checks the existing G1 decision **against the original case-set bytes**.
+In `--mode adapt`, it copies the approved cases, changes only the `target` label
+in memory, and renders a test class that runs against Maven's `refactored` profile.
+The expected values, preconditions, case IDs, and units are unchanged. Its output
+is Java source only; it does not modify `testcases_final.json` or write a second
+case-set JSON. A separate LangGraph G3 approval is still required before executing
+tests against the refactored source in the full workflow. The `adapt` CLI itself
+does not implement G3 or run Maven.
+
+Example (from the repository root, after a real G1 acceptance):
+
+```bash
+python3 .agents/testgen/materialize_junit.py \
+  --mode adapt \
+  --profile projects/seasonswitch/profile.json \
+  --cases runs/<run>/testcases_final.json \
+  --report runs/<run>/dedupe-report.md \
+  --log runs/<run>/hitl_decisions.json \
+  --out java/src/test/java/cse4392/SeasonSwitchAdaptedTest.java
+```
+
+If the original generated class is already present, this adds a second JUnit
+class rather than replacing it. Loc's harness instead reuses the original Java
+tests and swaps Maven profiles, which is sufficient while the public interface
+remains compatible. This adapter is project-specific; the main testgen CLI
+contains no SeasonSwitch behavior.
