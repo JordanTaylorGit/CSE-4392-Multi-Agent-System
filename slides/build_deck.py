@@ -399,13 +399,72 @@ def build(out: Path) -> list[str]:
     ], size=14)
 
     # (d) code per component ----------------------------------------------
-    for title, owner, what in [
-        ("EP and BVA subagents", "P1 (Kyle)", "Frontmatter, how the profile drives the cases, and one case each from testcases_ep.json and testcases_bva.json."),
-        ("Orchestrator", "P2 (Loc)", "The LangGraph graph in harness/graph.py: the parallel EP/BVA fan-out, the G1 and G3 interrupts, the 5-loop caps, and resuming from the SQLite checkpoint."),
-    ]:
-        s = new("(d) Code")
-        header(s, title, "")
-        hole(s, MARGIN, Inches(2.0), body_w, Inches(2.2), owner, what)
+    s = new("(d) Code")
+    header(s, "EP and BVA subagents",
+           "testgen spawns both at once. The skills name no project: every SeasonSwitch fact comes from profile.json.")
+    ep_n = sum(c["method"] == "EP" for c in pipe["cases"]) if pipe else 19
+    bva_n = sum(c["method"] == "BVA" for c in pipe["cases"]) if pipe else 18
+
+    def boxed(x, y, w, h, label, src, size=11):
+        code(s, x, y, w, h, "\n" + src.strip("\n"), size=size)
+        text(s, x + Inches(0.25), y + Inches(0.12), w - Inches(0.5), Inches(0.35), label, size=12, bold=True)
+
+    boxed(MARGIN, Inches(1.95), Inches(6.0), Inches(2.35),
+          "skill frontmatter (ep-tests shown; bva-tests mirrors it)", """
+id: ep-tests
+executor: agent   # SKILL.md text = the system prompt
+inputs: [projects/<project>/profile.json]
+outputs: [testcases_ep.json]
+schema: schemas/testcase-set.schema.json
+gate: none   # cases are reviewed at G1, after merge""")
+    bullets(s, Inches(6.9), Inches(1.9), Inches(5.7), Inches(2.5), [
+        ("units[] → EP: ", f"5 units × each state, and each side of the 68/77 guards → {ep_n} cases"),
+        ("boundaries[] → BVA: ", f"coolTemp 68 and heatTemp 77 on timerOff; temp−1 / temp / temp+1 in every state → {bva_n} cases"),
+        ("constraints[] → setup: ", "reset the static state, skip the Swing timer, capture System.out, drive state via the public API"),
+        ("merge_cases.py: ", f"dedupes on (unit, setup, inputs): {ep_n + bva_n} in, 0 removed → G1 review"),
+    ], size=13, gap=0.05)
+    half = (body_w - Inches(0.3)) / 2
+    boxed(MARGIN, Inches(4.5), half, Inches(2.3), "an EP case: testcases_ep.json", """
+{ "id": "EP-01", "unit": "cool",
+  "setup": { "state": "OFF", "room.temp": 70 },
+  "expected": { "state": "COOL", "ac.isOn": true,
+    "stdout": "Cooling started. RmTemp=70\\n" },
+  "partition": "cool-from-OFF",
+  "rationale": "cool() from OFF starts the AC" }""")
+    boxed(MARGIN + half + Inches(0.3), Inches(4.5), half, Inches(2.3),
+          "a BVA partition: testcases_bva.json (3 cases as one)", """
+{ "id": "BVA-01…03", "unit": "timerOff",
+  "setup": { "state": "COOL",
+             "room.temp": 67 | 68 | 69 },
+  "boundary": "coolTemp = 68: room.temp > 68",
+  "expected": { "ac.isOn": false | false | true,
+    "stdout": "Cooling stopped" | "Cooling started" } }""")
+
+    s = new("(d) Code")
+    header(s, "Orchestrator",
+           "A LangGraph graph runs the 12 steps: the model proposes, the runtime executes and records.")
+    code(s, MARGIN, Inches(1.95), Inches(5.9), Inches(3.9), """
+# EP and BVA run in parallel, then join
+graph.add_edge(START, "prepare_generation")
+connect("prepare_generation",
+        lambda _: ["ep", "bva"], ["ep", "bva"])
+graph.add_edge(["ep", "bva"], "merge")
+
+# a review gate (G1 and G3)
+def node(state):
+    payload = stages.review_payload(gate, state)
+    decision = interrupt(payload)
+    stages.record_decision(payload, decision, state)""", size=11)
+    text(s, MARGIN, Inches(6.0), Inches(5.9), Inches(0.7),
+         [[("Evidence, not claims: ", {"bold": True}),
+           ("coverage is read from the real Surefire and JaCoCo reports (main() excluded), never from the model.", {})]],
+         size=12, color=MUTED)
+    bullets(s, Inches(6.8), Inches(1.95), Inches(5.8), Inches(4.8), [
+        ("Model proposes, runtime executes. ", "The LLM returns JSON (cases, or Java files and notes). Only the runtime runs Maven, reads the reports and routes the graph."),
+        ("Parallel fan-out, then join. ", "EP and BVA are separate nodes; merge waits for both, and a failure from either sends generation back for a retry."),
+        ("Human gates. ", "G1 (test cases) and G3 (refactored code) call interrupt(). The run pauses until a named reviewer submits a decision carrying the hash of what was reviewed; a stale or malformed decision is refused."),
+        ("Bounded loops, resumable runs. ", "Generation, refactor, repair and gap proposals stop at five tries, then the run is marked blocked. Each run has its own SQLite checkpoint; status and resume --decision continue it."),
+    ], size=14, gap=0.06)
 
     s = new("(d) Code")
     header(s, "Refactor skill and prompt mutations",
@@ -570,23 +629,25 @@ source = adapter.render(render_cases, profile,
     # (f) lessons ----------------------------------------------------------
     s = new("(f) Lessons learned")
     header(s, "Experience and lessons learned", "Two bullets from each person; P5 collects them.")
-    text(s, MARGIN, Inches(1.85), Inches(6), Inches(0.3), "P3", size=12, bold=True, color=MUTED)
-    bullets(s, MARGIN, Inches(2.15), Inches(6.0), Inches(2.0), [
-        ("Run the build on day one. ", "The scaffold's pom.xml could not be parsed (a \"--\" inside a comment), and nobody noticed until Maven ran."),
-        ("Check the coverage arithmetic. ", "Adding up every counter in jacoco.xml looked plausible and was four times too high."),
-    ], size=14)
-    text(s, MARGIN, Inches(4.1), Inches(6), Inches(0.3), "P5", size=12, bold=True, color=MUTED)
-    bullets(s, MARGIN, Inches(4.4), Inches(6.0), Inches(2.3), [
-        ("Tests first gave us an objective judge. ", "Writing a 21-test matrix over the original before refactoring made every prompt version a pass/fail result."),
-        ("Constraints beat descriptions, but passing tests aren't a design review. ", "Prompts that named what the tests depend on fixed the failures."),
-    ], size=14)
-    text(s, Inches(7.1), Inches(1.85), Inches(5.5), Inches(0.3), "P4", size=12, bold=True, color=MUTED)
-    bullets(s, Inches(7.1), Inches(2.15), Inches(5.5), Inches(2.0), [
-        ("Validate before generating. ", "Schema checks and G1 approval kept invalid or outdated cases from becoming tests."),
-        ("Separate logic from the project. ", "A reusable testgen tool and a SeasonSwitch adapter made refactored test reuse easier."),
-    ], size=14)
-    hole(s, Inches(7.1), Inches(4.4), Inches(5.5), Inches(2.0), "P1, P2",
-         "Two bullets each.", size=15)
+    col_w = (body_w - Inches(0.4)) / 2
+    quads = [
+        ("P3", MARGIN, Inches(1.85), [
+            ("Run the build on day one. ", "The scaffold's pom.xml could not be parsed (a \"--\" inside a comment), and nobody noticed until Maven ran."),
+            ("Check the coverage arithmetic. ", "Adding up every counter in jacoco.xml looked plausible and was four times too high.")]),
+        ("P4", MARGIN + col_w + Inches(0.4), Inches(1.85), [
+            ("Validate before generating. ", "Schema checks and G1 approval kept invalid or outdated cases from becoming tests."),
+            ("Separate logic from the project. ", "A reusable testgen tool and a SeasonSwitch adapter made refactored test reuse easier.")]),
+        ("P5", MARGIN, Inches(4.15), [
+            ("Tests first gave us an objective judge. ", "Writing a 21-test matrix over the original before refactoring made every prompt version a pass/fail result."),
+            ("Constraints beat descriptions, but passing tests aren't a design review. ", "Prompts that named what the tests depend on fixed the failures.")]),
+        ("P1", MARGIN + col_w + Inches(0.4), Inches(4.15), [
+            ("Generate tests systematically. ", "Deriving cases from equivalence classes and boundary values means every class and boundary gets a check, so a passing suite is real evidence."),
+            ("A custom harness was no better than an existing one. ", "Ours gave no performance or quality gain over running the same skills through an established agentic coding harness.")]),
+    ]
+    for who, x, y, items in quads:
+        text(s, x, y, col_w, Inches(0.3), who, size=12, bold=True, color=MUTED)
+        bullets(s, x, y + Inches(0.3), col_w, Inches(1.95), items, size=13, gap=0.05)
+    hole(s, MARGIN, Inches(6.45), body_w, Inches(0.5), "P2 (Loc)", "Two bullets.", size=12)
 
     # (g) conclusion -------------------------------------------------------
     s = new("(g) Conclusion")
