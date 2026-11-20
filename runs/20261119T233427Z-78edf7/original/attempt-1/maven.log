@@ -1,0 +1,113 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------< edu.uta.cse4392:seasonswitch >--------------------
+[INFO] Building SeasonSwitch 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ seasonswitch ---
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (prepare-agent) @ seasonswitch ---
+[INFO] argLine set to "-javaagent:/home/kyle/.m2/repository/org/jacoco/org.jacoco.agent/0.8.12/org.jacoco.agent-0.8.12-runtime.jar=destfile=/home/kyle/Documents/CSE 4392/Assignments/Team Assignment 3/CSE-4392-Multi-Agent-System/runs/20261119T233427Z-78edf7/workspace/java/target/jacoco.exec"
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ seasonswitch ---
+[INFO] skip non existing resourceDirectory /home/kyle/Documents/CSE 4392/Assignments/Team Assignment 3/CSE-4392-Multi-Agent-System/runs/20261119T233427Z-78edf7/workspace/java/src/main/resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ seasonswitch ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 1 source file with javac [debug release 17] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ seasonswitch ---
+[INFO] skip non existing resourceDirectory /home/kyle/Documents/CSE 4392/Assignments/Team Assignment 3/CSE-4392-Multi-Agent-System/runs/20261119T233427Z-78edf7/workspace/java/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ seasonswitch ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 2 source files with javac [debug release 17] to target/test-classes
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ seasonswitch ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running cse4392.GeneratedPipelineTest
+Cooling started. RmTemp=70
+Cooling stopped. RmTemp=67
+Cooling started. RmTemp=70
+Cooling stopped. RmTemp=68
+Cooling started. RmTemp=70
+Cooling stopped. RmTemp=69
+Heating started. RmTemp=70
+Heating stopped. RmTemp=76
+Heating started. RmTemp=70
+Heating stopped. RmTemp=77
+Heating started. RmTemp=70
+Heating stopped. RmTemp=78
+Cooling stopped. RmTemp=70
+Cooling started. RmTemp=70
+Cooling stopped. RmTemp=70
+Heating started. RmTemp=70
+Cooling stopped. RmTemp=70
+Heating stopped. RmTemp=70
+Heating started. RmTemp=70
+Heating stopped. RmTemp=70
+Cooling started. RmTemp=70
+Heating stopped. RmTemp=70
+Heating started. RmTemp=70
+Cooling started. RmTemp=70
+Cooling started. RmTemp=70
+Cooling stopped. RmTemp=69
+Cooling started. RmTemp=70
+Cooling stopped. RmTemp=67
+Heating started. RmTemp=70
+Heating stopped. RmTemp=76
+Heating started. RmTemp=70
+Heating stopped. RmTemp=78
+[INFO] Tests run: 20, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.118 s -- in cse4392.GeneratedPipelineTest
+[INFO] Running cse4392.SeasonSwitchTest
+Cooling started. RmTemp=70
+Cooling started. RmTemp=69
+Cooling started. RmTemp=70
+Cooling stopped. RmTemp=68
+Heating started. RmTemp=70
+Heating started. RmTemp=76
+Cooling started. RmTemp=70
+Cooling started. RmTemp=69
+Heating started. RmTemp=70
+Heating started. RmTemp=70
+Cooling started. RmTemp=70
+Heating started. RmTemp=70
+Heating stopped. RmTemp=70
+Cooling started. RmTemp=70
+Heating started. RmTemp=70
+Cooling started. RmTemp=70
+Cooling stopped. RmTemp=70
+Heating started. RmTemp=70
+Cooling started. RmTemp=70
+Cooling started. RmTemp=70
+Heating started. RmTemp=70
+Cooling started. RmTemp=70
+Heating started. RmTemp=70
+Heating stopped. RmTemp=77
+Heating started. RmTemp=70
+Cooling started. RmTemp=70
+[INFO] Tests run: 21, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.031 s -- in cse4392.SeasonSwitchTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 41, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jacoco:0.8.12:report (report) @ seasonswitch ---
+[INFO] Loading execution data file /home/kyle/Documents/CSE 4392/Assignments/Team Assignment 3/CSE-4392-Multi-Agent-System/runs/20261119T233427Z-78edf7/workspace/java/target/jacoco.exec
+[INFO] Analyzed bundle 'SeasonSwitch' with 4 classes
+[INFO] 
+[INFO] --- jacoco:0.8.12:report (default-cli) @ seasonswitch ---
+[INFO] Loading execution data file /home/kyle/Documents/CSE 4392/Assignments/Team Assignment 3/CSE-4392-Multi-Agent-System/runs/20261119T233427Z-78edf7/workspace/java/target/jacoco.exec
+[INFO] Analyzed bundle 'SeasonSwitch' with 4 classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.578 s
+[INFO] Finished at: 2026-11-19T17:41:23-06:00
+[INFO] ------------------------------------------------------------------------

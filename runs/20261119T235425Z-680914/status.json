@@ -1,0 +1,15 @@
+{
+  "status": "blocked",
+  "error": "merge: merge_cases: \nERROR: Conflicting expected results: EP-12 and BVA-01 have the same dedupe key ['unit', 'setup', 'inputs']\n",
+  "counts": {
+    "generation": 2
+  },
+  "feedback": "Expecting value: line 1 column 1 (char 0)",
+  "ep_error": "",
+  "bva_error": "",
+  "generation_failed": false,
+  "target": "original",
+  "pending_gap": {},
+  "pending": [],
+  "next_nodes": []
+}

@@ -1,0 +1,366 @@
+{
+  "generated_by": "bva-tests",
+  "target": "original",
+  "cases": [
+    {
+      "id": "BVA-01",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 67
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "room.temp": 67,
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Cooling stopped. RmTemp=67\n"
+      },
+      "partition": "coolTemp-below",
+      "rationale": "In COOL state, room.temp=67, 67 > 68 is false, so ac.off()"
+    },
+    {
+      "id": "BVA-02",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 68
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "room.temp": 68,
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Cooling stopped. RmTemp=68\n"
+      },
+      "partition": "coolTemp-at",
+      "rationale": "In COOL state, room.temp=68, 68 > 68 is false, so ac.off()"
+    },
+    {
+      "id": "BVA-03",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 69
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "room.temp": 69,
+        "ac.isOn": true,
+        "heater.isOn": false,
+        "stdout": "Cooling started. RmTemp=69\n"
+      },
+      "partition": "coolTemp-above",
+      "rationale": "In COOL state, room.temp=69, 69 > 68 is true, so ac.on()"
+    },
+    {
+      "id": "BVA-04",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 67
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "room.temp": 67,
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "stdout": "Heating started. RmTemp=67\n"
+      },
+      "partition": "coolTemp-below-HEAT",
+      "rationale": "In HEAT state, timerOff uses heatTemp guard (77), not coolTemp; 67 < 77 so heater.on()"
+    },
+    {
+      "id": "BVA-05",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 68
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "room.temp": 68,
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "stdout": "Heating started. RmTemp=68\n"
+      },
+      "partition": "coolTemp-at-HEAT",
+      "rationale": "In HEAT state, timerOff uses heatTemp guard; 68 < 77 so heater.on()"
+    },
+    {
+      "id": "BVA-06",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 69
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "room.temp": 69,
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "stdout": "Heating started. RmTemp=69\n"
+      },
+      "partition": "coolTemp-above-HEAT",
+      "rationale": "In HEAT state, timerOff uses heatTemp guard; 69 < 77 so heater.on()"
+    },
+    {
+      "id": "BVA-07",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "OFF",
+        "room.temp": 67
+      },
+      "inputs": {},
+      "expected": {
+        "state": "OFF",
+        "room.temp": 67,
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": ""
+      },
+      "partition": "coolTemp-below-OFF",
+      "rationale": "In OFF state, timerOff does nothing; guard not consulted"
+    },
+    {
+      "id": "BVA-08",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "OFF",
+        "room.temp": 68
+      },
+      "inputs": {},
+      "expected": {
+        "state": "OFF",
+        "room.temp": 68,
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": ""
+      },
+      "partition": "coolTemp-at-OFF",
+      "rationale": "In OFF state, timerOff does nothing; guard not consulted"
+    },
+    {
+      "id": "BVA-09",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "OFF",
+        "room.temp": 69
+      },
+      "inputs": {},
+      "expected": {
+        "state": "OFF",
+        "room.temp": 69,
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": ""
+      },
+      "partition": "coolTemp-above-OFF",
+      "rationale": "In OFF state, timerOff does nothing; guard not consulted"
+    },
+    {
+      "id": "BVA-10",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 76
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "room.temp": 76,
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "stdout": "Heating started. RmTemp=76\n"
+      },
+      "partition": "heatTemp-below",
+      "rationale": "In HEAT state, room.temp=76, 76 < 77 is true, so heater.on()"
+    },
+    {
+      "id": "BVA-11",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 77
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "room.temp": 77,
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Heating stopped. RmTemp=77\n"
+      },
+      "partition": "heatTemp-at",
+      "rationale": "In HEAT state, room.temp=77, 77 < 77 is false, so heater.off()"
+    },
+    {
+      "id": "BVA-12",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 78
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "room.temp": 78,
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Heating stopped. RmTemp=78\n"
+      },
+      "partition": "heatTemp-above",
+      "rationale": "In HEAT state, room.temp=78, 78 < 77 is false, so heater.off()"
+    },
+    {
+      "id": "BVA-13",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 76
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "room.temp": 76,
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Cooling stopped. RmTemp=76\n"
+      },
+      "partition": "heatTemp-below-COOL",
+      "rationale": "In COOL state, timerOff uses coolTemp guard (68), not heatTemp; 76 > 68 so ac.off()"
+    },
+    {
+      "id": "BVA-14",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 77
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "room.temp": 77,
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Cooling stopped. RmTemp=77\n"
+      },
+      "partition": "heatTemp-at-COOL",
+      "rationale": "In COOL state, timerOff uses coolTemp guard; 77 > 68 so ac.off()"
+    },
+    {
+      "id": "BVA-15",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 78
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "room.temp": 78,
+        "ac.isOn": true,
+        "heater.isOn": false,
+        "stdout": "Cooling started. RmTemp=78\n"
+      },
+      "partition": "heatTemp-above-COOL",
+      "rationale": "In COOL state, timerOff uses coolTemp guard; 78 > 68 so ac.on()"
+    },
+    {
+      "id": "BVA-16",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "OFF",
+        "room.temp": 76
+      },
+      "inputs": {},
+      "expected": {
+        "state": "OFF",
+        "room.temp": 76,
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": ""
+      },
+      "partition": "heatTemp-below-OFF",
+      "rationale": "In OFF state, timerOff does nothing; guard not consulted"
+    },
+    {
+      "id": "BVA-17",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "OFF",
+        "room.temp": 77
+      },
+      "inputs": {},
+      "expected": {
+        "state": "OFF",
+        "room.temp": 77,
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": ""
+      },
+      "partition": "heatTemp-at-OFF",
+      "rationale": "In OFF state, timerOff does nothing; guard not consulted"
+    },
+    {
+      "id": "BVA-18",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "OFF",
+        "room.temp": 78
+      },
+      "inputs": {},
+      "expected": {
+        "state": "OFF",
+        "room.temp": 78,
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": ""
+      },
+      "partition": "heatTemp-above-OFF",
+      "rationale": "In OFF state, timerOff does nothing; guard not consulted"
+    }
+  ]
+}

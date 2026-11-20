@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="cse4392.GeneratedPipelineTest" time="0.127" tests="20" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="17"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/home/kyle/Documents/CSE 4392/Assignments/Team Assignment 3/CSE-4392-Multi-Agent-System/runs/20261119T225729Z-9aece9/workspace/java/target/test-classes:/home/kyle/Documents/CSE 4392/Assignments/Team Assignment 3/CSE-4392-Multi-Agent-System/runs/20261119T225729Z-9aece9/workspace/java/target/classes:/home/kyle/.m2/repository/org/junit/jupiter/junit-jupiter/5.10.2/junit-jupiter-5.10.2.jar:/home/kyle/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar:/home/kyle/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/home/kyle/.m2/repository/org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2.jar:/home/kyle/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/kyle/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.10.2/junit-jupiter-params-5.10.2.jar:/home/kyle/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar:/home/kyle/.m2/repository/org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2.jar:"/>
+    <property name="java.vm.vendor" value="Eclipse Adoptium"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="sun.font.fontmanager" value="sun.awt.X11FontManager"/>
+    <property name="java.vendor.url" value="https://adoptium.net/"/>
+    <property name="os.name" value="Linux"/>
+    <property name="java.vm.specification.version" value="17"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.boot.library.path" value="/home/kyle/tools/jdk-17.0.21.1+2/lib"/>
+    <property name="sun.java.command" value="/home/kyle/Documents/CSE 4392/Assignments/Team Assignment 3/CSE-4392-Multi-Agent-System/runs/20261119T225729Z-9aece9/workspace/java/target/surefire/surefirebooter-20261119170502508_3.jar /home/kyle/Documents/CSE 4392/Assignments/Team Assignment 3/CSE-4392-Multi-Agent-System/runs/20261119T225729Z-9aece9/workspace/java/target/surefire 2026-11-19T17-05-02_426-jvmRun1 surefire-20261119170502508_1tmp surefire_0-20261119170502508_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="/home/kyle/Documents/CSE 4392/Assignments/Team Assignment 3/CSE-4392-Multi-Agent-System/runs/20261119T225729Z-9aece9/workspace/java/target/test-classes:/home/kyle/Documents/CSE 4392/Assignments/Team Assignment 3/CSE-4392-Multi-Agent-System/runs/20261119T225729Z-9aece9/workspace/java/target/classes:/home/kyle/.m2/repository/org/junit/jupiter/junit-jupiter/5.10.2/junit-jupiter-5.10.2.jar:/home/kyle/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar:/home/kyle/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/home/kyle/.m2/repository/org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2.jar:/home/kyle/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/kyle/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.10.2/junit-jupiter-params-5.10.2.jar:/home/kyle/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar:/home/kyle/.m2/repository/org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/home/kyle"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2026-11-17"/>
+    <property name="java.home" value="/home/kyle/tools/jdk-17.0.21.1+2"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/home/kyle/Documents/CSE 4392/Assignments/Team Assignment 3/CSE-4392-Multi-Agent-System/runs/20261119T225729Z-9aece9/workspace/java"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="surefire.real.class.path" value="/home/kyle/Documents/CSE 4392/Assignments/Team Assignment 3/CSE-4392-Multi-Agent-System/runs/20261119T225729Z-9aece9/workspace/java/target/surefire/surefirebooter-20261119170502508_3.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="17.0.21.1+2"/>
+    <property name="user.name" value="kyle"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="5.15.0-185-generic"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="java.vendor.version" value="Temurin-17.0.21.1+2"/>
+    <property name="localRepository" value="/home/kyle/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://github.com/adoptium/adoptium-support/issues"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="java.version" value="17.0.21.1"/>
+    <property name="user.dir" value="/home/kyle/Documents/CSE 4392/Assignments/Team Assignment 3/CSE-4392-Multi-Agent-System/runs/20261119T225729Z-9aece9/workspace/java"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib"/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="java.vendor" value="Eclipse Adoptium"/>
+    <property name="java.vm.version" value="17.0.21.1+2"/>
+    <property name="java.specification.maintenance.version" value="1"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="61.0"/>
+  </properties>
+  <testcase name="test_BVA_01" classname="cse4392.GeneratedPipelineTest" time="0.058">
+    <system-out><![CDATA[Cooling started. RmTemp=70
+Cooling stopped. RmTemp=67
+]]></system-out>
+  </testcase>
+  <testcase name="test_BVA_02" classname="cse4392.GeneratedPipelineTest" time="0.001">
+    <system-out><![CDATA[Cooling started. RmTemp=70
+Cooling stopped. RmTemp=68
+]]></system-out>
+  </testcase>
+  <testcase name="test_BVA_03" classname="cse4392.GeneratedPipelineTest" time="0.002">
+    <system-out><![CDATA[Cooling started. RmTemp=70
+Cooling stopped. RmTemp=69
+]]></system-out>
+  </testcase>
+  <testcase name="test_BVA_04" classname="cse4392.GeneratedPipelineTest" time="0.001">
+    <system-out><![CDATA[Heating started. RmTemp=70
+Heating stopped. RmTemp=76
+]]></system-out>
+  </testcase>
+  <testcase name="test_BVA_05" classname="cse4392.GeneratedPipelineTest" time="0.001">
+    <system-out><![CDATA[Heating started. RmTemp=70
+Heating stopped. RmTemp=77
+]]></system-out>
+  </testcase>
+  <testcase name="test_BVA_06" classname="cse4392.GeneratedPipelineTest" time="0.003">
+    <system-out><![CDATA[Heating started. RmTemp=70
+Heating stopped. RmTemp=78
+]]></system-out>
+  </testcase>
+  <testcase name="test_EP_01" classname="cse4392.GeneratedPipelineTest" time="0.001">
+    <system-out><![CDATA[Cooling stopped. RmTemp=70
+]]></system-out>
+  </testcase>
+  <testcase name="test_EP_02" classname="cse4392.GeneratedPipelineTest" time="0.001">
+    <system-out><![CDATA[Cooling started. RmTemp=70
+Cooling stopped. RmTemp=70
+]]></system-out>
+  </testcase>
+  <testcase name="test_EP_03" classname="cse4392.GeneratedPipelineTest" time="0.002">
+    <system-out><![CDATA[Heating started. RmTemp=70
+Cooling stopped. RmTemp=70
+]]></system-out>
+  </testcase>
+  <testcase name="test_EP_04" classname="cse4392.GeneratedPipelineTest" time="0.001">
+    <system-out><![CDATA[Heating stopped. RmTemp=70
+]]></system-out>
+  </testcase>
+  <testcase name="test_EP_05" classname="cse4392.GeneratedPipelineTest" time="0.001">
+    <system-out><![CDATA[Heating started. RmTemp=70
+Heating stopped. RmTemp=70
+]]></system-out>
+  </testcase>
+  <testcase name="test_EP_06" classname="cse4392.GeneratedPipelineTest" time="0.001">
+    <system-out><![CDATA[Cooling started. RmTemp=70
+Heating stopped. RmTemp=70
+]]></system-out>
+  </testcase>
+  <testcase name="test_EP_07" classname="cse4392.GeneratedPipelineTest" time="0.001"/>
+  <testcase name="test_EP_08" classname="cse4392.GeneratedPipelineTest" time="0.0">
+    <system-out><![CDATA[Heating started. RmTemp=70
+]]></system-out>
+  </testcase>
+  <testcase name="test_EP_09" classname="cse4392.GeneratedPipelineTest" time="0.0">
+    <system-out><![CDATA[Cooling started. RmTemp=70
+]]></system-out>
+  </testcase>
+  <testcase name="test_EP_10" classname="cse4392.GeneratedPipelineTest" time="0.002"/>
+  <testcase name="test_EP_11" classname="cse4392.GeneratedPipelineTest" time="0.002">
+    <system-out><![CDATA[Cooling started. RmTemp=70
+Cooling stopped. RmTemp=70
+]]></system-out>
+  </testcase>
+  <testcase name="test_EP_12" classname="cse4392.GeneratedPipelineTest" time="0.001">
+    <system-out><![CDATA[Cooling started. RmTemp=70
+Cooling stopped. RmTemp=67
+]]></system-out>
+  </testcase>
+  <testcase name="test_EP_13" classname="cse4392.GeneratedPipelineTest" time="0.002">
+    <system-out><![CDATA[Heating started. RmTemp=70
+Heating stopped. RmTemp=70
+]]></system-out>
+  </testcase>
+  <testcase name="test_EP_14" classname="cse4392.GeneratedPipelineTest" time="0.001">
+    <system-out><![CDATA[Heating started. RmTemp=70
+Heating stopped. RmTemp=78
+]]></system-out>
+  </testcase>
+</testsuite>

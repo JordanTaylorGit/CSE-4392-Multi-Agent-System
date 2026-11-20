@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>edu.uta.cse4392</groupId>
+  <artifactId>seasonswitch</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+  <name>SeasonSwitch</name>
+
+  <!--
+    The original and refactored classes are both named `SeasonSwitch` in the same package, so they
+    cannot share a classpath. Profiles swap the main source root while src/test/java stays put —
+    which is what makes "reuse the existing tests" literal rather than aspirational.
+
+      mvn -P original   test
+      mvn -P refactored test
+  -->
+
+  <properties>
+    <main.src.dir>src/original/java</main.src.dir>
+    <maven.compiler.release>17</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <junit.version>5.10.2</junit.version>
+    <jacoco.version>0.8.12</jacoco.version>
+    <!-- set by the original / refactored profile; original when neither is given -->
+    <src.root>src/original/java</src.root>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <sourceDirectory>${main.src.dir}</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
+        <configuration>
+          <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals><goal>prepare-agent</goal></goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals><goal>report</goal></goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>original</id>
+      <properties>
+        <main.src.dir>src/original/java</main.src.dir>
+      </properties>
+    </profile>
+    <profile>
+      <id>refactored</id>
+      <properties>
+        <main.src.dir>src/refactored/java</main.src.dir>
+      </properties>
+    </profile>
+  </profiles>
+</project>

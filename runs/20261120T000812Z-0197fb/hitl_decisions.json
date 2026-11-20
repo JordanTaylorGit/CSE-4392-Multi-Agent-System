@@ -1,0 +1,18 @@
+[
+  {
+    "reviewer": "devin (agent operator for kyle)",
+    "decision": "accept",
+    "requested_changes": [],
+    "artifact_sha256": "49b7caf50fcb57036bd9fcad480650aa9bdec4d6e5f4d9140eeb3bc3847ca2d7",
+    "gate": "review_testcases",
+    "timestamp_utc": "2026-11-20T00:21:25+00:00"
+  },
+  {
+    "reviewer": "devin (agent operator for kyle)",
+    "decision": "accept",
+    "requested_changes": [],
+    "artifact_sha256": "4695996a63f21f4f9a5c057be945e0113b9983e64bc8c4027a00cc980d76d25e",
+    "gate": "review_refactored",
+    "timestamp_utc": "2026-11-20T00:25:31+00:00"
+  }
+]

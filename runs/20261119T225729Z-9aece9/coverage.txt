@@ -1,0 +1,2 @@
+original 28 0 100.0000
+refactored 8 0 100.0000

@@ -1,0 +1,9 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+SeasonSwitch,cse4392,CoolState,0,83,0,4,0,23,0,8,0,6
+SeasonSwitch,cse4392,SeasonSwitch.AC,0,17,0,0,0,6,0,3,0,3
+SeasonSwitch,cse4392,SeasonSwitch,71,94,8,0,19,27,5,8,1,8
+SeasonSwitch,cse4392,OffState,0,36,0,0,0,14,0,6,0,6
+SeasonSwitch,cse4392,SeasonSwitch.Room,0,23,0,0,0,5,0,2,0,2
+SeasonSwitch,cse4392,NoOpState,0,8,0,0,0,6,0,6,0,6
+SeasonSwitch,cse4392,SeasonSwitch.Heater,0,17,0,0,0,6,0,3,0,3
+SeasonSwitch,cse4392,HeatState,0,83,0,4,0,23,0,8,0,6

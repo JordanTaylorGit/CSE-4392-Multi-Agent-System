@@ -1,0 +1,414 @@
+{
+  "generated_by": "testgen",
+  "target": "refactored",
+  "cases": [
+    {
+      "id": "EP-01",
+      "method": "EP",
+      "target": "refactored",
+      "unit": "cool",
+      "setup": {
+        "state": "OFF",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "room.temp": 70
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "ac.isOn": true,
+        "heater.isOn": false,
+        "stdout": "Cooling started. RmTemp=70\n"
+      },
+      "partition": "off",
+      "rationale": "state is OFF; cool() turns ac on, transitions to COOL, and prints the start message"
+    },
+    {
+      "id": "EP-02",
+      "method": "EP",
+      "target": "refactored",
+      "unit": "cool",
+      "setup": {
+        "state": "COOL",
+        "ac.isOn": true,
+        "heater.isOn": false,
+        "room.temp": 70
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "ac.isOn": true,
+        "heater.isOn": false,
+        "stdout": ""
+      },
+      "partition": "alreadyCool",
+      "rationale": "state is COOL; cool() is a no-op, leaving state and switches unchanged with no output"
+    },
+    {
+      "id": "EP-03",
+      "method": "EP",
+      "target": "refactored",
+      "unit": "cool",
+      "setup": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "room.temp": 70
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "ac.isOn": true,
+        "heater.isOn": false,
+        "stdout": "Cooling started. RmTemp=70\n"
+      },
+      "partition": "fromHeat",
+      "rationale": "state is HEAT; cool() turns heater off, ac on, transitions to COOL, and prints the start message"
+    },
+    {
+      "id": "EP-04",
+      "method": "EP",
+      "target": "refactored",
+      "unit": "heat",
+      "setup": {
+        "state": "OFF",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "room.temp": 70
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "stdout": "Heating started. RmTemp=70\n"
+      },
+      "partition": "off",
+      "rationale": "state is OFF; heat() turns heater on, transitions to HEAT, and prints the start message"
+    },
+    {
+      "id": "EP-05",
+      "method": "EP",
+      "target": "refactored",
+      "unit": "heat",
+      "setup": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "room.temp": 70
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "stdout": ""
+      },
+      "partition": "alreadyHeat",
+      "rationale": "state is HEAT; heat() is a no-op, leaving state and switches unchanged with no output"
+    },
+    {
+      "id": "EP-06",
+      "method": "EP",
+      "target": "refactored",
+      "unit": "heat",
+      "setup": {
+        "state": "COOL",
+        "ac.isOn": true,
+        "heater.isOn": false,
+        "room.temp": 70
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "stdout": "Heating started. RmTemp=70\n"
+      },
+      "partition": "fromCool",
+      "rationale": "state is COOL; heat() turns ac off, heater on, transitions to HEAT, and prints the start message"
+    },
+    {
+      "id": "EP-07",
+      "method": "EP",
+      "target": "refactored",
+      "unit": "off",
+      "setup": {
+        "state": "OFF",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "room.temp": 70
+      },
+      "inputs": {},
+      "expected": {
+        "state": "OFF",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": ""
+      },
+      "partition": "alreadyOff",
+      "rationale": "state is OFF; off() is a no-op, leaving state and switches unchanged with no output"
+    },
+    {
+      "id": "EP-08",
+      "method": "EP",
+      "target": "refactored",
+      "unit": "off",
+      "setup": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "room.temp": 70
+      },
+      "inputs": {},
+      "expected": {
+        "state": "OFF",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Heating stopped. RmTemp=70\n"
+      },
+      "partition": "fromHeat",
+      "rationale": "state is HEAT; off() turns heater off, transitions to OFF, and prints the stop message"
+    },
+    {
+      "id": "EP-09",
+      "method": "EP",
+      "target": "refactored",
+      "unit": "off",
+      "setup": {
+        "state": "COOL",
+        "ac.isOn": true,
+        "heater.isOn": false,
+        "room.temp": 70
+      },
+      "inputs": {},
+      "expected": {
+        "state": "OFF",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Cooling stopped. RmTemp=70\n"
+      },
+      "partition": "fromCool",
+      "rationale": "state is COOL; off() turns ac off, transitions to OFF, and prints the stop message"
+    },
+    {
+      "id": "EP-10",
+      "method": "EP",
+      "target": "refactored",
+      "unit": "timerOff",
+      "setup": {
+        "state": "OFF",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "room.temp": 70
+      },
+      "inputs": {},
+      "expected": {
+        "state": "OFF",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": ""
+      },
+      "partition": "off",
+      "rationale": "state is OFF; timerOff() is a no-op with no output and unchanged switches"
+    },
+    {
+      "id": "EP-11",
+      "method": "EP",
+      "target": "refactored",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "ac.isOn": true,
+        "heater.isOn": false,
+        "room.temp": 70
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "ac.isOn": true,
+        "heater.isOn": false,
+        "stdout": "Cooling started. RmTemp=70\n"
+      },
+      "partition": "coolTemp-above",
+      "rationale": "state is COOL and room.temp=70 > 68; timerOff turns ac on and prints the start message"
+    },
+    {
+      "id": "EP-12",
+      "method": "EP",
+      "target": "refactored",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "ac.isOn": true,
+        "heater.isOn": false,
+        "room.temp": 67
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Cooling stopped. RmTemp=67\n"
+      },
+      "partition": "coolTemp-at-or-below",
+      "rationale": "state is COOL and room.temp=67 <= 68; timerOff turns ac off and prints the stop message"
+    },
+    {
+      "id": "EP-13",
+      "method": "EP",
+      "target": "refactored",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "room.temp": 70
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "stdout": "Heating started. RmTemp=70\n"
+      },
+      "partition": "heatTemp-below",
+      "rationale": "state is HEAT and room.temp=70 < 77; timerOff turns heater on and prints the start message"
+    },
+    {
+      "id": "EP-14",
+      "method": "EP",
+      "target": "refactored",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "room.temp": 78
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Heating stopped. RmTemp=78\n"
+      },
+      "partition": "heatTemp-at-or-above",
+      "rationale": "state is HEAT and room.temp=78 >= 77; timerOff turns heater off and prints the stop message"
+    },
+    {
+      "id": "BVA-01",
+      "method": "BVA",
+      "target": "refactored",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 67
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Cooling stopped. RmTemp=67\n"
+      },
+      "partition": "coolTemp-below",
+      "rationale": "At 67, room.temp > coolTemp (68) is false; ac.off() branch taken"
+    },
+    {
+      "id": "BVA-02",
+      "method": "BVA",
+      "target": "refactored",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 68
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Cooling stopped. RmTemp=68\n"
+      },
+      "partition": "coolTemp-at",
+      "rationale": "At 68, room.temp > coolTemp (68) is false; ac.off() branch taken"
+    },
+    {
+      "id": "BVA-03",
+      "method": "BVA",
+      "target": "refactored",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 69
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "ac.isOn": true,
+        "heater.isOn": false,
+        "stdout": "Cooling started. RmTemp=69\n"
+      },
+      "partition": "coolTemp-above",
+      "rationale": "At 69, room.temp > coolTemp (68) is true; ac.on() branch taken"
+    },
+    {
+      "id": "BVA-04",
+      "method": "BVA",
+      "target": "refactored",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 76
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "stdout": "Heating started. RmTemp=76\n"
+      },
+      "partition": "heatTemp-below",
+      "rationale": "At 76, room.temp < heatTemp (77) is true; heater.on() branch taken"
+    },
+    {
+      "id": "BVA-05",
+      "method": "BVA",
+      "target": "refactored",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 77
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Heating stopped. RmTemp=77\n"
+      },
+      "partition": "heatTemp-at",
+      "rationale": "At 77, room.temp < heatTemp (77) is false; heater.off() branch taken"
+    },
+    {
+      "id": "BVA-06",
+      "method": "BVA",
+      "target": "refactored",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 78
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Heating stopped. RmTemp=78\n"
+      },
+      "partition": "heatTemp-above",
+      "rationale": "At 78, room.temp < heatTemp (77) is false; heater.off() branch taken"
+    }
+  ]
+}

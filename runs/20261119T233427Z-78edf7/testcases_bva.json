@@ -1,0 +1,120 @@
+{
+  "generated_by": "bva-tests",
+  "target": "original",
+  "cases": [
+    {
+      "id": "BVA-01",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 67
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Cooling stopped. RmTemp=67\n"
+      },
+      "partition": "coolTemp-below",
+      "rationale": "At 67, room.temp > coolTemp (68) is false; ac should be off"
+    },
+    {
+      "id": "BVA-02",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 68
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Cooling stopped. RmTemp=68\n"
+      },
+      "partition": "coolTemp-at",
+      "rationale": "At 68, room.temp > coolTemp (68) is false (boundary, not greater); ac should be off"
+    },
+    {
+      "id": "BVA-03",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 69
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "ac.isOn": true,
+        "heater.isOn": false,
+        "stdout": "Cooling started. RmTemp=69\n"
+      },
+      "partition": "coolTemp-above",
+      "rationale": "At 69, room.temp > coolTemp (68) is true; ac should be on"
+    },
+    {
+      "id": "BVA-04",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 76
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "stdout": "Heating started. RmTemp=76\n"
+      },
+      "partition": "heatTemp-below",
+      "rationale": "At 76, room.temp < heatTemp (77) is true; heater should be on"
+    },
+    {
+      "id": "BVA-05",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 77
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Heating stopped. RmTemp=77\n"
+      },
+      "partition": "heatTemp-at",
+      "rationale": "At 77, room.temp < heatTemp (77) is false (boundary, not less than); heater should be off"
+    },
+    {
+      "id": "BVA-06",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 78
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Heating stopped. RmTemp=78\n"
+      },
+      "partition": "heatTemp-above",
+      "rationale": "At 78, room.temp < heatTemp (77) is false; heater should be off"
+    }
+  ]
+}

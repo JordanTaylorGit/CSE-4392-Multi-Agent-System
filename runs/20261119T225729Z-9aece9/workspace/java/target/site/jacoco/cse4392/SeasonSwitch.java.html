@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SeasonSwitch.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">SeasonSwitch</a> &gt; <a href="index.source.html" class="el_package">cse4392</a> &gt; <span class="el_source">SeasonSwitch.java</span></div><h1>SeasonSwitch.java</h1><pre class="source lang-java linenums">package cse4392;
+
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.concurrent.CountDownLatch;
+import java.util.Map;
+
+<span class="fc" id="L9">public class SeasonSwitch implements ActionListener {</span>
+<span class="fc" id="L10">    static int state=0;</span>
+    static final int OFF=0, COOL=1, HEAT=2;
+
+<span class="fc" id="L13">    AC ac=new AC();</span>
+<span class="fc" id="L14">    Heater heater=new Heater();</span>
+<span class="fc" id="L15">    Timer timer=new Timer(1200, this);</span>
+<span class="fc" id="L16">    Room room=new Room();</span>
+<span class="fc" id="L17">    int coolTemp=68;</span>
+<span class="fc" id="L18">    int heatTemp=77;</span>
+
+<span class="fc" id="L20">    private static final SeasonState OFF_STATE = new OffState();</span>
+<span class="fc" id="L21">    private static final SeasonState COOL_STATE = new CoolState();</span>
+<span class="fc" id="L22">    private static final SeasonState HEAT_STATE = new HeatState();</span>
+<span class="fc" id="L23">    private static final SeasonState NO_OP_STATE = new NoOpState();</span>
+
+<span class="fc" id="L25">    private static final Map&lt;Integer, SeasonState&gt; STATES = Map.of(</span>
+<span class="fc" id="L26">        OFF, OFF_STATE,</span>
+<span class="fc" id="L27">        COOL, COOL_STATE,</span>
+<span class="fc" id="L28">        HEAT, HEAT_STATE</span>
+    );
+
+    SeasonState getCurrentState() {
+<span class="fc" id="L32">        return STATES.getOrDefault(state, NO_OP_STATE);</span>
+    }
+
+    public void cool() {
+<span class="fc" id="L36">        getCurrentState().cool(this);</span>
+<span class="fc" id="L37">    }</span>
+
+    public void heat() {
+<span class="fc" id="L40">        getCurrentState().heat(this);</span>
+<span class="fc" id="L41">    }</span>
+
+    public void off() {
+<span class="fc" id="L44">        getCurrentState().off(this);</span>
+<span class="fc" id="L45">    }</span>
+
+    public void actionPerformed(ActionEvent e) {
+<span class="fc" id="L48">        timerOff();</span>
+<span class="fc" id="L49">    }</span>
+
+    public void timerOff() {
+<span class="fc" id="L52">        getCurrentState().timerOff(this);</span>
+<span class="fc" id="L53">    }</span>
+
+    public static void main(String[] args) {
+<span class="nc" id="L56">        System.out.println(&quot;Enter off, cool or heat to run. &quot;+</span>
+           &quot;Press Ctrl-c to exit.&quot;);
+<span class="nc" id="L58">        SeasonSwitch s=new SeasonSwitch();</span>
+<span class="nc" id="L59">        s.room.timer.start();</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        if (args.length==0) s.cool(); else</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        if (&quot;off&quot;.compareTo(args[0])==0) {</span>
+<span class="nc" id="L62">           s.off(); </span>
+<span class="nc" id="L63">           System.out.println(&quot;System off. System exits.&quot;);</span>
+<span class="nc" id="L64">           System.exit(0);</span>
+        } else
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        if (&quot;cool&quot;.compareTo(args[0])==0) s.cool(); else</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        if (&quot;heat&quot;.compareTo(args[0])==0) s.heat(); else {</span>
+<span class="nc" id="L68">           System.out.println(&quot;Unknown command. System exits.&quot;);</span>
+<span class="nc" id="L69">           System.exit(1);</span>
+        }
+        try {
+<span class="nc" id="L72">           new CountDownLatch(5).await();</span>
+<span class="nc" id="L73">        } catch (InterruptedException e) {</span>
+<span class="nc" id="L74">           Thread.currentThread().interrupt();</span>
+<span class="nc" id="L75">           s.timer.stop();</span>
+<span class="nc" id="L76">           s.room.timer.stop();</span>
+<span class="nc" id="L77">        }</span>
+<span class="nc" id="L78">    }</span>
+
+<span class="fc" id="L80">    class AC {</span>
+<span class="fc" id="L81">        boolean isOn=false;</span>
+
+        public void on() {
+<span class="fc" id="L84">            isOn=true;</span>
+<span class="fc" id="L85">        }</span>
+
+        public void off() {
+<span class="fc" id="L88">            isOn=false;</span>
+<span class="fc" id="L89">        }</span>
+    }
+
+<span class="fc" id="L92">    class Heater {</span>
+<span class="fc" id="L93">        boolean isOn=false;</span>
+
+        public void on() {
+<span class="fc" id="L96">            isOn=true;</span>
+<span class="fc" id="L97">        }</span>
+
+        public void off() {
+<span class="fc" id="L100">            isOn=false;</span>
+<span class="fc" id="L101">        }</span>
+    }
+
+<span class="fc" id="L104">    class Room implements ActionListener {</span>
+<span class="fc" id="L105">        public int temp=70;</span>
+<span class="fc" id="L106">        Timer timer=new Timer(400, this);</span>
+
+        public void actionPerformed(ActionEvent ae) {
+<span class="fc" id="L109">            getCurrentState().roomActionPerformed(SeasonSwitch.this);</span>
+<span class="fc" id="L110">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

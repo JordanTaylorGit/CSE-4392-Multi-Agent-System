@@ -1,0 +1,348 @@
+{
+  "generated_by": "bva-tests",
+  "target": "original",
+  "cases": [
+    {
+      "id": "BVA-01",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 67
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Cooling stopped. RmTemp=67\n"
+      },
+      "partition": "coolTemp-below",
+      "rationale": "At 67, room.temp > coolTemp (68) is false; timerOff turns AC off"
+    },
+    {
+      "id": "BVA-02",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 68
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Cooling stopped. RmTemp=68\n"
+      },
+      "partition": "coolTemp-at",
+      "rationale": "At 68, room.temp > coolTemp (68) is false; timerOff turns AC off"
+    },
+    {
+      "id": "BVA-03",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 69
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "ac.isOn": true,
+        "heater.isOn": false,
+        "stdout": "Cooling started. RmTemp=69\n"
+      },
+      "partition": "coolTemp-above",
+      "rationale": "At 69, room.temp > coolTemp (68) is true; timerOff turns AC on"
+    },
+    {
+      "id": "BVA-04",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 67
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "stdout": "Heating started. RmTemp=67\n"
+      },
+      "partition": "coolTemp-below",
+      "rationale": "coolTemp boundary value 67; in HEAT state timerOff consults room.temp < heatTemp (77), not coolTemp"
+    },
+    {
+      "id": "BVA-05",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 68
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "stdout": "Heating started. RmTemp=68\n"
+      },
+      "partition": "coolTemp-at",
+      "rationale": "coolTemp boundary value 68; in HEAT state timerOff consults room.temp < heatTemp (77), not coolTemp"
+    },
+    {
+      "id": "BVA-06",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 69
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "stdout": "Heating started. RmTemp=69\n"
+      },
+      "partition": "coolTemp-above",
+      "rationale": "coolTemp boundary value 69; in HEAT state timerOff consults room.temp < heatTemp (77), not coolTemp"
+    },
+    {
+      "id": "BVA-07",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "OFF",
+        "room.temp": 67
+      },
+      "inputs": {},
+      "expected": {
+        "state": "OFF",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": ""
+      },
+      "partition": "coolTemp-below",
+      "rationale": "coolTemp boundary value 67; in OFF state timerOff is not consulted"
+    },
+    {
+      "id": "BVA-08",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "OFF",
+        "room.temp": 68
+      },
+      "inputs": {},
+      "expected": {
+        "state": "OFF",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": ""
+      },
+      "partition": "coolTemp-at",
+      "rationale": "coolTemp boundary value 68; in OFF state timerOff is not consulted"
+    },
+    {
+      "id": "BVA-09",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "OFF",
+        "room.temp": 69
+      },
+      "inputs": {},
+      "expected": {
+        "state": "OFF",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": ""
+      },
+      "partition": "coolTemp-above",
+      "rationale": "coolTemp boundary value 69; in OFF state timerOff is not consulted"
+    },
+    {
+      "id": "BVA-10",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 76
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "ac.isOn": true,
+        "heater.isOn": false,
+        "stdout": "Cooling started. RmTemp=76\n"
+      },
+      "partition": "heatTemp-below",
+      "rationale": "heatTemp boundary value 76; in COOL state timerOff consults room.temp > coolTemp (68), not heatTemp"
+    },
+    {
+      "id": "BVA-11",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 77
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "ac.isOn": true,
+        "heater.isOn": false,
+        "stdout": "Cooling started. RmTemp=77\n"
+      },
+      "partition": "heatTemp-at",
+      "rationale": "heatTemp boundary value 77; in COOL state timerOff consults room.temp > coolTemp (68), not heatTemp"
+    },
+    {
+      "id": "BVA-12",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "COOL",
+        "room.temp": 78
+      },
+      "inputs": {},
+      "expected": {
+        "state": "COOL",
+        "ac.isOn": true,
+        "heater.isOn": false,
+        "stdout": "Cooling started. RmTemp=78\n"
+      },
+      "partition": "heatTemp-above",
+      "rationale": "heatTemp boundary value 78; in COOL state timerOff consults room.temp > coolTemp (68), not heatTemp"
+    },
+    {
+      "id": "BVA-13",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 76
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": true,
+        "stdout": "Heating started. RmTemp=76\n"
+      },
+      "partition": "heatTemp-below",
+      "rationale": "At 76, room.temp < heatTemp (77) is true; timerOff turns heater on"
+    },
+    {
+      "id": "BVA-14",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 77
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Heating stopped. RmTemp=77\n"
+      },
+      "partition": "heatTemp-at",
+      "rationale": "At 77, room.temp < heatTemp (77) is false; timerOff turns heater off"
+    },
+    {
+      "id": "BVA-15",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "HEAT",
+        "room.temp": 78
+      },
+      "inputs": {},
+      "expected": {
+        "state": "HEAT",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": "Heating stopped. RmTemp=78\n"
+      },
+      "partition": "heatTemp-above",
+      "rationale": "At 78, room.temp < heatTemp (77) is false; timerOff turns heater off"
+    },
+    {
+      "id": "BVA-16",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "OFF",
+        "room.temp": 76
+      },
+      "inputs": {},
+      "expected": {
+        "state": "OFF",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": ""
+      },
+      "partition": "heatTemp-below",
+      "rationale": "heatTemp boundary value 76; in OFF state timerOff is not consulted"
+    },
+    {
+      "id": "BVA-17",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "OFF",
+        "room.temp": 77
+      },
+      "inputs": {},
+      "expected": {
+        "state": "OFF",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": ""
+      },
+      "partition": "heatTemp-at",
+      "rationale": "heatTemp boundary value 77; in OFF state timerOff is not consulted"
+    },
+    {
+      "id": "BVA-18",
+      "method": "BVA",
+      "target": "original",
+      "unit": "timerOff",
+      "setup": {
+        "state": "OFF",
+        "room.temp": 78
+      },
+      "inputs": {},
+      "expected": {
+        "state": "OFF",
+        "ac.isOn": false,
+        "heater.isOn": false,
+        "stdout": ""
+      },
+      "partition": "heatTemp-above",
+      "rationale": "heatTemp boundary value 78; in OFF state timerOff is not consulted"
+    }
+  ]
+}

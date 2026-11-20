@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "testcase-set.schema.json",
+  "title": "A set of SeasonSwitch test cases",
+  "type": "object",
+  "required": ["generated_by", "target", "cases"],
+  "additionalProperties": false,
+  "properties": {
+    "generated_by": { "type": "string" },
+    "target": { "enum": ["original", "refactored"] },
+    "cases": { "type": "array", "minItems": 1, "items": { "$ref": "testcase.schema.json" } }
+  }
+}
