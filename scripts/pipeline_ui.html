@@ -1,0 +1,137 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>SeasonSwitch Pipeline</title>
+<style>
+:root{--bg:#0d1117;--panel:#161b22;--edge:#30363d;--txt:#e6edf3;--dim:#8b949e;
+--ok:#3fb950;--run:#58a6ff;--gate:#d29922;--bad:#f85149}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);
+font:14px/1.5 -apple-system,"Segoe UI",Roboto,sans-serif}
+header{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--edge)}
+h1{font-size:18px;margin:0}.badge{font-size:11px;padding:2px 8px;border-radius:10px;
+background:#1f6feb33;color:var(--run);border:1px solid #1f6feb55}
+#runs{display:flex;gap:8px;flex-wrap:wrap;padding:12px 20px}
+.run{padding:6px 14px;border-radius:8px;border:1px solid var(--edge);background:var(--panel);
+cursor:pointer;font-size:12px;color:var(--dim)}
+.run.active{border-color:var(--run);color:var(--txt)}
+.run .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px}
+.s-complete{background:var(--ok)}.s-in_progress{background:var(--run)}
+.s-waiting_for_human{background:var(--gate)}.s-blocked{background:var(--bad)}
+#flow{display:flex;align-items:stretch;gap:0;padding:18px 20px;overflow-x:auto}
+.stage{flex:1;min-width:110px;text-align:center;position:relative;padding-top:26px}
+.stage:before{content:"";position:absolute;top:12px;left:50%;transform:translateX(-50%);
+width:14px;height:14px;border-radius:50%;background:var(--edge);border:3px solid var(--bg)}
+.stage:after{content:"";position:absolute;top:18px;left:calc(-50% + 10px);width:calc(100% - 20px);
+height:2px;background:var(--edge)}
+.stage:first-child:after{display:none}
+.stage .lbl{font-size:11px;color:var(--dim);padding:0 4px}
+.stage.done:before{background:var(--ok)}.stage.done:after{background:var(--ok)}
+.stage.current:before{background:var(--run);animation:pulse 1.2s infinite}
+.stage.gate:before{background:var(--gate);animation:pulse 1.2s infinite}
+.stage.gate .lbl{color:var(--gate);font-weight:600}
+.stage.blocked:before{background:var(--bad)}.stage.blocked .lbl{color:var(--bad)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 #58a6ff66}50%{box-shadow:0 0 0 7px transparent}}
+main{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 20px 20px}
+.panel{background:var(--panel);border:1px solid var(--edge);border-radius:10px;padding:14px 16px}
+.panel h2{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim)}
+#feed{grid-column:1/-1;background:#0a0e13;font:12px/1.6 ui-monospace,Menlo,monospace;
+height:260px;overflow-y:auto;padding:12px 16px;border-radius:10px;border:1px solid var(--edge)}
+#feed .t{color:#555}.k-GATE{color:var(--gate)}.k-DECISION{color:#d2a8ff}.k-STAGE{color:var(--run)}
+.k-MODEL{color:#79c0ff}.k-STATUS{color:var(--ok)}.k-ERROR{color:var(--bad)}.k-HARNESS{color:#8b949e}
+table{border-collapse:collapse;width:100%;font-size:12px}
+td,th{padding:4px 8px;border-bottom:1px solid #21262d;text-align:left}
+th{color:var(--dim);font-weight:600}
+pre{white-space:pre-wrap;font:12px/1.5 ui-monospace,Menlo,monospace;max-height:260px;overflow:auto;
+background:#0a0e13;padding:10px;border-radius:8px}
+button{padding:7px 16px;border-radius:8px;border:1px solid var(--edge);cursor:pointer;font-size:13px}
+#approve{background:#238636;color:#fff;border-color:#2ea043}
+#deny{background:transparent;color:var(--bad);border-color:var(--bad)}
+input,textarea{background:#0a0e13;color:var(--txt);border:1px solid var(--edge);border-radius:6px;
+padding:6px 10px;font-size:13px}
+textarea{width:100%;min-height:60px;margin-top:8px}
+.cards{display:flex;gap:10px;flex-wrap:wrap}
+.card{background:#0a0e13;border:1px solid var(--edge);border-radius:8px;padding:10px 14px;min-width:140px}
+.card .n{font-size:20px;font-weight:600}.card .l{font-size:11px;color:var(--dim)}
+.gatebox{border:1px solid var(--gate);border-radius:10px;padding:14px 16px;background:#d2992212;grid-column:1/-1}
+.hidden{display:none}
+</style></head><body>
+<header><h1>SeasonSwitch Multi-Agent Pipeline</h1><span class="badge">model: groot · 192.168.1.185</span></header>
+<div id="runs"></div>
+<div id="flow"></div>
+<div id="gate" class="hidden" style="margin:0 20px 14px"></div>
+<main>
+  <div class="panel"><h2>Test cases</h2><div id="cases"></div></div>
+  <div class="panel"><h2>Results</h2><div id="results" class="cards"></div>
+    <div id="report"></div></div>
+  <div id="feed"></div>
+</main>
+<script>
+let run=null,feedOff=0;
+const $=id=>document.getElementById(id);
+async function j(u,o){const r=await fetch(u,o);return r.json()}
+async function loadRuns(){
+  const rs=await j('/api/runs');
+  if(!run&&rs.length)run=rs[0].id;
+  $('runs').innerHTML=rs.map(r=>
+    `<div class="run ${r.id===run?'active':''}" onclick="pick('${r.id}')">
+     <span class="dot s-${r.status}"></span>${r.id.slice(0,15)}…
+     <b>${r.status==='waiting_for_human'?'⏸ '+r.pending[0]:r.status}</b></div>`).join('');
+}
+function pick(id){run=id;feedOff=0;$('feed').innerHTML='';render()}
+async function render(){
+  if(!run)return;
+  const d=await j('/api/run/'+run);
+  $('flow').innerHTML=d.stages.map(s=>
+    `<div class="stage ${s.state}"><div class="lbl">${s.label}</div></div>`).join('');
+  // gate panel
+  const g=$('gate');
+  if(d.pending&&d.pending.length){
+    const p=d.pending[0];
+    g.className='gatebox';
+    const notes=Object.entries(d.artifacts).filter(([k])=>k!=='run-report.md')
+      .map(([k,v])=>`<b>${k}</b><pre>${esc(v)}</pre>`).join('');
+    g.innerHTML=`<h2 style="color:var(--gate);margin:0 0 8px">⏸ Awaiting review — ${p.gate}</h2>
+      <div style="font-size:11px;color:var(--dim)">artifact ${p.artifact_sha256.slice(0,16)}…</div>
+      ${notes}
+      <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+        <label style="font-size:12px;color:var(--dim)">reviewer:</label>
+        <input id="reviewer" value="kyle" style="width:160px">
+        <button id="approve" onclick="decide('accept')">✓ Approve</button>
+        <button id="deny" onclick="decide('request_changes')">✗ Request changes</button>
+      </div><textarea id="changes" placeholder="required when requesting changes"></textarea>`;
+  } else {g.className='hidden';g.innerHTML=''}
+  // cases
+  if(d.cases.length){
+    $('cases').innerHTML=`<table><tr><th>id</th><th>method</th><th>unit</th><th>partition</th></tr>`+
+      d.cases.map(c=>`<tr><td>${c.id}</td><td>${c.method}</td><td>${c.unit}</td><td>${esc(c.partition||'')}</td></tr>`).join('')+'</table>';
+  } else $('cases').innerHTML='<span style="color:var(--dim)">none yet</span>';
+  // results
+  $('results').innerHTML=Object.entries(d.results).map(([t,r])=>
+    `<div class="card"><div class="n" style="color:${r.passed?'var(--ok)':'var(--bad)'}">${r.percent}%</div>
+     <div class="l">${t} · ${r.tests} tests · ${r.covered}/${r.covered+r.missed} branches</div></div>`).join('');
+  $('report').innerHTML=d.artifacts['run-report.md']?`<b>run-report.md</b><pre>${esc(d.artifacts['run-report.md'])}</pre>`:'';
+  // decisions
+  if(d.decisions.length)$('report').innerHTML+=`<h2 style="font-size:12px;color:var(--dim)">HITL history</h2>`+
+    d.decisions.map(x=>`<div style="font-size:12px">• ${x.gate}: <b>${x.decision}</b> by ${x.reviewer} ${x.requested_changes.length?'<i>('+x.requested_changes.join('; ')+')</i>':''}</div>`).join('');
+}
+async function decide(what){
+  const changes=$('changes').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const r=await j('/api/decide',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({run_id:run,reviewer:$('reviewer').value,decision:what,requested_changes:changes})});
+  if(r.error)alert(r.error);
+}
+async function feed(){
+  if(!run)return;
+  const d=await j('/api/feed/'+run+'?since='+feedOff);
+  feedOff=d.offset;
+  if(d.lines){
+    const el=$('feed'),stick=el.scrollTop+el.clientHeight>=el.scrollHeight-30;
+    el.innerHTML+=d.lines.split('\n').filter(Boolean).map(l=>{
+      const m=l.match(/^(\S+) \[(\w+)\] (.*)$/);
+      return m?`<div><span class="t">${m[1]}</span> <span class="k-${m[2]}">[${m[2]}]</span> ${esc(m[3])}</div>`:`<div>${esc(l)}</div>`;
+    }).join('');
+    if(stick)el.scrollTop=el.scrollHeight;
+  }
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+loadRuns().then(render);
+setInterval(loadRuns,3000);setInterval(render,2000);setInterval(feed,1000);
+</script></body></html>

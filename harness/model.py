@@ -21,7 +21,7 @@ def create_model():
         base_url=os.environ.get("MODEL_BASE_URL", DEFAULT_BASE_URL),
         api_key=os.environ.get("MODEL_API_KEY", "local"),
         temperature=0,
-        timeout=600,
+        timeout=int(os.environ.get("MODEL_TIMEOUT", "1800")),
         max_tokens=int(os.environ.get("MODEL_MAX_TOKENS", "16384")),
         model_kwargs={"response_format": {"type": "json_object"}},
     )
