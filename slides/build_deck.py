@@ -217,6 +217,28 @@ def methods(jacoco: Path) -> list[tuple[str, int, int]]:
     return out
 
 
+def pipeline_run(runs: Path) -> dict | None:
+    """Newest complete pipeline run (runs/<ts>-<id>/ with status.json), read into the pieces the deck shows."""
+    import json
+    for d in sorted(runs.glob("*-*/status.json"), reverse=True):
+        run = d.parent
+        if json.loads(d.read_text()).get("status") != "complete" or not (run / "hitl_decisions.json").exists():
+            continue
+        cases = json.loads((run / "testcases_final.json").read_text())
+        cases = cases["cases"] if isinstance(cases, dict) else cases
+        out = {"dir": run, "cases": cases, "status": json.loads(d.read_text()),
+               "decisions": json.loads((run / "hitl_decisions.json").read_text())}
+        for target in ("original", "refactored"):
+            attempt = sorted((run / target).glob("attempt-*"))[-1]
+            r = json.loads((attempt / "result.json").read_text())
+            out[target] = {"dir": run, "covered": r["covered"], "missed": r["missed"], "pct": r["percent"],
+                           "tests": r["tests"], "failures": r["failures"], "errors": 0,
+                           "attempts": len(list((run / target).glob("attempt-*"))),
+                           "methods": methods(attempt / "jacoco.xml")}
+        return out
+    return None
+
+
 # ------------------------------------------------------------------- slides
 
 def build(out: Path) -> list[str]:
@@ -242,6 +264,9 @@ def build(out: Path) -> list[str]:
     body_w = W - 2 * MARGIN
     orig = latest_run(REPO_ROOT / "runs", "original")
     refac = latest_run(REPO_ROOT / "runs", "refactored")
+    pipe = pipeline_run(REPO_ROOT / "runs")
+    if pipe:
+        orig, refac = pipe["original"], pipe["refactored"]
 
     # 1. Title -------------------------------------------------------------
     s = new()
@@ -445,16 +470,42 @@ source = adapter.render(render_cases, profile,
 
     # (e) tests, results, coverage ----------------------------------------
     s = new("(e) Tests and coverage")
-    header(s, "Original code: test cases",
+    if pipe:
+        import collections, json
+        cases = pipe["cases"]
+        ep = [c for c in cases if c["method"] == "EP"]
+        bva = [c for c in cases if c["method"] == "BVA"]
+        units = collections.Counter(c["unit"] for c in ep)
+        temps = sorted({c["setup"].get("room.temp") for c in bva})
+        header(s, "Original code: test cases from the pipeline",
+               f"{len(ep)} EP + {len(bva)} BVA cases, merged with no duplicates or conflicts, approved at G1, then written as JUnit.")
+        table(s, MARGIN, Inches(2.0), Inches(6.2), [
+            ["Subagent", "Cases", "What they cover"],
+            ["ep-tests", str(len(ep)), ", ".join(f"{u} {n}" for u, n in units.items())],
+            ["bva-tests", str(len(bva)), "timerOff() in OFF, COOL and HEAT at " + ", ".join(map(str, temps))],
+            ["merged", str(len(cases)), "0 removed (dedupe key: unit, setup, inputs)"],
+        ], [1.4, 0.9, 3.9], size=13, row_h=0.72)
+        text(s, MARGIN, Inches(5.1), Inches(6.2), Inches(1.2),
+             f"Plus the 21 hand-written safety-net tests: {pipe['original']['tests']} JUnit tests in total. "
+             f"From {pipe['dir'].relative_to(REPO_ROOT)}/testcases_final.json.", size=12, color=MUTED)
+        ex_bva = next(c for c in bva if c["setup"].get("room.temp") == 68 and c["setup"].get("state") == "COOL")
+        def show(c):
+            setup = ", ".join(f"{k}={json.dumps(v)}" for k, v in c["setup"].items())
+            exp = ", ".join(f"{k}={json.dumps(v)}" for k, v in c["expected"].items() if k != "stdout")
+            return f'{c["id"]}  {c["unit"]}()\n  given  {setup}\n  expect {exp}\n  prints {c["expected"].get("stdout", "").strip()}'
+        code(s, Inches(7.1), Inches(2.0), Inches(5.5), Inches(4.3),
+             show(ep[0]) + "\n\n" + show(ex_bva), size=11)
+    else:
+      header(s, "Original code: test cases",
            "21 JUnit tests, one per cell of the (state × event) matrix, plus room ticks.")
-    table(s, MARGIN, Inches(2.0), Inches(7.4), [
+      table(s, MARGIN, Inches(2.0), Inches(7.4), [
         ["Group", "Tests", "What they cover"],
         ["cool() / heat() / off()", "9", "every state × command, including no-ops"],
         ["timerOff()", "5", "OFF, and each side of 68 and 77"],
         ["Room tick", "5", "temperature drift per state and device"],
         ["Other", "2", "invalid state ignored; actionPerformed delegates"],
     ], [2.6, 0.9, 3.9], size=14, row_h=0.58)
-    hole(s, Inches(8.4), Inches(2.0), Inches(4.2), Inches(3.0), "P1 / P4",
+      hole(s, Inches(8.4), Inches(2.0), Inches(4.2), Inches(3.0), "P1 / P4",
          "These are Jordan's hand-written safety-net tests. Replace or add the pipeline's own case set (testcases_final.json) once a full run exists.", size=13)
 
     def results(run, title, takeaway, note, missing):
@@ -482,11 +533,12 @@ source = adapter.render(render_cases, profile,
             y += Inches(0.48)
         text(s, MARGIN, y + Inches(0.1), body_w, Inches(0.7), note, size=12, color=MUTED)
 
-    results(orig, "Original code: results and branch coverage", "",
+    results(orig, "Original code: results and branch coverage",
+            f"{orig['tests']} tests: {orig['tests'] - 21} generated by the pipeline plus the 21 hand-written ones." if pipe else "",
             "main() (8 branches) is left out: it blocks forever and calls System.exit. JaCoCo 0.8.12, JUnit 5.10.2, JDK 17.",
             ("P3", "Run scripts/coverage.sh original and save the run in runs/."))
     results(refac, "Refactored code: results and branch coverage",
-            "The same 21 tests, unchanged; only the Maven profile differs.",
+            "The same approved tests, unchanged; only the Maven profile differs." if pipe else "The same 21 tests, unchanged; only the Maven profile differs.",
             "28 branches became 8: the five switch (state) blocks turned into calls on the current state object, "
             "which JaCoCo doesn't count as branches. What's left are the 68/77 checks and the room tick. Every line outside main() is covered.",
             ("P5 + P3", "Needs java/src/refactored (Jordan). Then P3 runs scripts/coverage.sh refactored and saves "
@@ -494,9 +546,26 @@ source = adapter.render(render_cases, profile,
 
     s = new()
     header(s, "Human-in-the-loop evidence", "Each gate stops the run and records who decided what, and when.")
-    hole(s, MARGIN, Inches(2.0), body_w, Inches(2.2), "P3 (after the full run)",
-         "hitl_decisions.json from G1 and G3: reviewer, timestamp, decision, requested changes, resulting diff. "
-         "Plus one changelog.md row from a repair loop.")
+    if not pipe:
+        hole(s, MARGIN, Inches(2.0), body_w, Inches(2.2), "P3 (after the full run)",
+             "hitl_decisions.json from G1 and G3: reviewer, timestamp, decision, requested changes, resulting diff.")
+    else:
+        names = {"review_testcases": "G1  test cases", "review_refactored": "G3  refactored code"}
+        rows = [["Gate", "Reviewer", "Decision", "Time (UTC)", "Artifact sha256"]]
+        for d in pipe["decisions"]:
+            rows.append([names.get(d["gate"], d["gate"]), d["reviewer"], d["decision"],
+                         d["timestamp_utc"][:16].replace("T", " "), d["artifact_sha256"][:12] + "…"])
+        table(s, MARGIN, Inches(2.0), body_w, rows, [2.4, 4.0, 1.2, 2.2, 2.1], size=13, row_h=0.6)
+        counts = pipe["status"]["counts"]
+        bullets(s, MARGIN, Inches(4.1), Inches(6.2), Inches(2.4), [
+            ("Resumable: ", "the run stops at each gate; resuming needs a decision file whose sha256 matches the reviewed artifact."),
+            ("Attempts: ", ", ".join(f"{k.replace('_', ' ')} {v}" for k, v in counts.items()) + " (cap 5)."),
+        ], size=14)
+        bullets(s, Inches(7.1), Inches(4.1), Inches(5.5), Inches(2.4), [
+            ("Gates that held: ", "of 5 runs, one paused for a person after the model's reply was cut off three times, and one was "
+                                  "blocked at the merge (EP-12 and BVA-01 expected different results for the same input)."),
+            ("Source: ", f"{pipe['dir'].relative_to(REPO_ROOT)}/hitl_decisions.json and STATE.md."),
+        ], size=14)
 
     # (f) lessons ----------------------------------------------------------
     s = new("(f) Lessons learned")
