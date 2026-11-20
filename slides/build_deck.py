@@ -628,26 +628,31 @@ source = adapter.render(render_cases, profile,
 
     # (f) lessons ----------------------------------------------------------
     s = new("(f) Lessons learned")
-    header(s, "Experience and lessons learned", "Two bullets from each person; P5 collects them.")
-    col_w = (body_w - Inches(0.4)) / 2
-    quads = [
-        ("P3", MARGIN, Inches(1.85), [
-            ("Run the build on day one. ", "The scaffold's pom.xml could not be parsed (a \"--\" inside a comment), and nobody noticed until Maven ran."),
-            ("Check the coverage arithmetic. ", "Adding up every counter in jacoco.xml looked plausible and was four times too high.")]),
-        ("P4", MARGIN + col_w + Inches(0.4), Inches(1.85), [
-            ("Validate before generating. ", "Schema checks and G1 approval kept invalid or outdated cases from becoming tests."),
-            ("Separate logic from the project. ", "A reusable testgen tool and a SeasonSwitch adapter made refactored test reuse easier.")]),
-        ("P5", MARGIN, Inches(4.15), [
-            ("Tests first gave us an objective judge. ", "Writing a 21-test matrix over the original before refactoring made every prompt version a pass/fail result."),
-            ("Constraints beat descriptions, but passing tests aren't a design review. ", "Prompts that named what the tests depend on fixed the failures.")]),
-        ("P1", MARGIN + col_w + Inches(0.4), Inches(4.15), [
+    header(s, "Experience and lessons learned", "Two lessons from each of us.")
+    people = [
+        ("P1  Kyle", [
             ("Generate tests systematically. ", "Deriving cases from equivalence classes and boundary values means every class and boundary gets a check, so a passing suite is real evidence."),
             ("A custom harness was no better than an existing one. ", "Ours gave no performance or quality gain over running the same skills through an established agentic coding harness.")]),
+        ("P2  Loc", [
+            ("Let the runtime, not the model, hold the truth. ", "Coverage comes from the JaCoCo report and every gate decision is tied to a sha256, so nothing the model says can pass a gate on its own."),
+            ("Plan for the model to fail. ", "Replies got cut off and EP and BVA disagreed; bounded retries and SQLite checkpoints turned those into a pause, not a restart.")]),
+        ("P3  Talha", [
+            ("Run the build on day one. ", "The scaffold's pom.xml could not be parsed (a \"--\" inside a comment), and nobody noticed until Maven ran."),
+            ("Check the coverage arithmetic. ", "Adding up every counter in jacoco.xml looked plausible and was four times too high.")]),
+        ("P4  Miguel", [
+            ("Validate before generating. ", "Schema checks and G1 approval kept invalid or outdated cases from becoming tests."),
+            ("Separate logic from the project. ", "A reusable testgen tool and a SeasonSwitch adapter made refactored test reuse easier.")]),
+        ("P5  Jordan", [
+            ("Tests first gave us an objective judge. ", "Writing a 21-test matrix over the original before refactoring made every prompt version a pass/fail result."),
+            ("Constraints beat descriptions, but passing tests aren't a design review. ", "Prompts that named what the tests depend on fixed the failures.")]),
     ]
-    for who, x, y, items in quads:
+    gap_x = Inches(0.35)
+    col_w = (body_w - 2 * gap_x) / 3
+    for i, (who, items) in enumerate(people):
+        x = MARGIN + (i % 3) * (col_w + gap_x)
+        y = Inches(1.8) if i < 3 else Inches(4.45)
         text(s, x, y, col_w, Inches(0.3), who, size=12, bold=True, color=MUTED)
-        bullets(s, x, y + Inches(0.3), col_w, Inches(1.95), items, size=13, gap=0.05)
-    hole(s, MARGIN, Inches(6.45), body_w, Inches(0.5), "P2 (Loc)", "Two bullets.", size=12)
+        bullets(s, x, y + Inches(0.3), col_w, Inches(2.3), items, size=12, gap=0.04)
 
     # (g) conclusion -------------------------------------------------------
     s = new("(g) Conclusion")
