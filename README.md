@@ -6,24 +6,22 @@ The main workflow skill remains [`.agents/orchestrator/SKILL.md`](.agents/orches
 
 ## Setup
 
-Use Python 3.11–3.14, [uv](https://docs.astral.sh/uv/), JDK 17, Maven, and [Ollama](https://ollama.com/).
+Use Python 3.11–3.14, [uv](https://docs.astral.sh/uv/), JDK 17, Maven, and an OpenAI-compatible model server.
 The CLI supports macOS and Linux; Windows users can use WSL because the run lock uses `fcntl`.
 
 ```bash
 # macOS, if these tools are not already installed
-brew install uv maven openjdk@17 ollama
+brew install uv maven openjdk@17
 export JAVA_HOME="$(brew --prefix openjdk@17)/libexec/openjdk.jdk/Contents/Home"
 export PATH="$JAVA_HOME/bin:$PATH"
 
 uv sync --locked
-ollama pull qwen3-coder:30b
-# In a separate terminal, if Ollama is not already running:
-OLLAMA_NUM_PARALLEL=2 ollama serve
 ```
 
-The selected model is local `qwen3-coder:30b` (approximately 19 GB to download).
-This choice targets the development machine's 48 GB memory; model quality still requires human review.
-The graph dispatches EP and BVA concurrently, although Ollama may queue requests depending on available resources and server configuration.
+The selected model is `groot`, served by a local llama.cpp server over the OpenAI API
+(default `http://192.168.1.185:8080/v1`; override with `MODEL_BASE_URL`, `MODEL_NAME`,
+and `MODEL_API_KEY`).
+The graph dispatches EP and BVA concurrently, although the model server may queue requests depending on available resources and server configuration.
 
 ## Start and review
 

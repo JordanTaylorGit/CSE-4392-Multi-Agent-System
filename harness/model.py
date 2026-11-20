@@ -9,20 +9,21 @@ from uuid import uuid4
 from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
 from langchain_core.runnables import Runnable
 
-DEFAULT_MODEL = "qwen3-coder:30b"
+DEFAULT_MODEL = "groot"
+DEFAULT_BASE_URL = "http://192.168.1.185:8080/v1"
 
 
 def create_model():
-    from langchain_ollama import ChatOllama
+    from langchain_openai import ChatOpenAI
 
-    return ChatOllama(
+    return ChatOpenAI(
         model=os.environ.get("MODEL_NAME", DEFAULT_MODEL),
-        base_url=os.environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434"),
+        base_url=os.environ.get("MODEL_BASE_URL", DEFAULT_BASE_URL),
+        api_key=os.environ.get("MODEL_API_KEY", "local"),
         temperature=0,
-        format="json",
-        num_ctx=32768,
-        num_predict=12000,
-        client_kwargs={"timeout": 600},
+        timeout=600,
+        max_tokens=int(os.environ.get("MODEL_MAX_TOKENS", "16384")),
+        model_kwargs={"response_format": {"type": "json_object"}},
     )
 
 

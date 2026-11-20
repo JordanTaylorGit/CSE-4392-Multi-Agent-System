@@ -9,9 +9,10 @@ from harness.model import SkillClient, create_model
 
 def test_default_and_replacement_model_are_selected_only_at_construction(monkeypatch):
     monkeypatch.delenv("MODEL_NAME", raising=False)
+    monkeypatch.delenv("MODEL_BASE_URL", raising=False)
     default = create_model()
-    assert default.model == "qwen3-coder:30b"
-    assert default.base_url == "http://127.0.0.1:11434"
+    assert default.model == "groot"
+    assert default.openai_api_base == "http://192.168.1.185:8080/v1"
     monkeypatch.setenv("MODEL_NAME", "another-model")
     assert create_model().model == "another-model"
 

@@ -7,12 +7,14 @@ emit cases using these keys; unfamiliar fields fail validation instead of being 
 | Field | Used in | Type | Meaning |
 |---|---|---|---|
 | `state` | `setup`, `expected` | `"OFF"`, `"COOL"`, `"HEAT"` | Current mode |
-| `room.temp` | `setup` | integer | Room temperature before action |
+| `room.temp` | `setup`, `expected` | integer | Room temperature before/after action |
 | `ac.isOn` | `setup`, `expected` | boolean | Air-conditioner switch |
 | `heater.isOn` | `setup`, `expected` | boolean | Heater switch |
 | `stdout` | `expected` | string | Exact output from the invoked method, with `\n` newlines |
 
-`inputs` must be `{}`: `cool`, `heat`, `off`, and `timerOff` take no arguments.
+`inputs` must be `{}`: `cool`, `heat`, `off`, `timerOff`, and `room.actionPerformed` take no
+arguments. Unit `room.actionPerformed` invokes the Room tick directly (`s.room.actionPerformed(null)`);
+use `expected.room.temp` to assert the drift.
 Missing `setup.state` means starting in OFF mode. At least one assertion is required.
 State is reached using `cool()`, `heat()`, or `off()`, not by assigning `SeasonSwitch.state`.
 The adapter stops Swing timers during testing, and captures only the output of
